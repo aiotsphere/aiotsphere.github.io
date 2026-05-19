@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --background: #081120;
+  --foreground: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 18% 8%, rgba(0, 209, 255, 0.18), transparent 34rem),
+    radial-gradient(circle at 82% 16%, rgba(139, 92, 246, 0.2), transparent 32rem),
+    radial-gradient(circle at 50% 86%, rgba(236, 72, 153, 0.12), transparent 30rem),
+    #081120;
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: rgba(0, 209, 255, 0.35);
+  color: #fff;
+}
+
+.glass {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.035));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 24px 80px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(18px);
+}
+
+.neon-text {
+  text-shadow: 0 0 18px rgba(0, 209, 255, 0.55), 0 0 42px rgba(139, 92, 246, 0.35);
+}
+
+.grid-mask {
+  mask-image: linear-gradient(to bottom, transparent, black 18%, black 72%, transparent);
+}
+
+.input-cyber {
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(8, 17, 32, 0.76);
+  padding: 0.85rem 1rem;
+  color: #fff;
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.input-cyber:focus {
+  border-color: rgba(0, 209, 255, 0.75);
+  box-shadow: 0 0 0 4px rgba(0, 209, 255, 0.12), 0 0 28px rgba(0, 209, 255, 0.2);
+}
+
+.input-cyber::placeholder {
+  color: rgba(192, 192, 192, 0.58);
+}
