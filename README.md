@@ -27,6 +27,21 @@ Deploy it as a Node.js server. The repository includes:
 
 For full functionality, deploy to a Node host such as Render, Railway, Fly.io, a VPS, or another platform that supports persistent disk storage.
 
+### Deploy To Render
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/aiotsphere/aiotsphere.github.io)
+
+Recommended setup:
+
+1. Open the Deploy to Render button above.
+2. Sign in to Render.
+3. Connect the GitHub repository `aiotsphere/aiotsphere.github.io`.
+4. Confirm the Blueprint from `render.yaml`.
+5. Keep the persistent disk mounted at `/app/data`.
+6. Deploy.
+
+After deployment, use the Render service URL as the live application URL.
+
 ## Local Storage Files
 
 Data is stored locally only:
