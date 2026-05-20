@@ -12,39 +12,25 @@ AI Builder Camp 2026 is included as a subproject under AIoT Sphere Lab.
 - Framer Motion
 - Lucide React
 - Sonner
-- Local JSON file storage with Node.js `fs`
+- Supabase database storage in production
+- Local JSON file storage fallback for development
 - QR generation with `qrcode`
 
-## Deployment
+## Free Deployment
 
-GitHub Pages cannot run this project because it uses Next.js API routes, authentication, and Node.js file storage.
+GitHub Pages cannot run this project because it uses Next.js API routes and authentication.
 
-Deploy it as a Node.js server. The repository includes:
+Use **Vercel Hobby + Supabase Free** for a free deployment:
 
-- `Dockerfile` for production server deployment
-- `render.yaml` for Render deployment with a persistent disk mounted at `/app/data`
 - `.github/workflows/build-check.yml` for lint/build validation
+- `supabase/schema.sql` for database setup
+- `DEPLOY_FREE_SUPABASE_VERCEL.md` for step-by-step deployment
 
-For full functionality, deploy to a Node host such as Render, Railway, Fly.io, a VPS, or another platform that supports persistent disk storage.
-
-### Deploy To Render
-
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/aiotsphere/aiotsphere.github.io)
-
-Recommended setup:
-
-1. Open the Deploy to Render button above.
-2. Sign in to Render.
-3. Connect the GitHub repository `aiotsphere/aiotsphere.github.io`.
-4. Confirm the Blueprint from `render.yaml`.
-5. Keep the persistent disk mounted at `/app/data`.
-6. Deploy.
-
-After deployment, use the Render service URL as the live application URL.
+If Supabase environment variables are missing, the app falls back to local JSON files for development.
 
 ## Local Storage Files
 
-Data is stored locally only:
+Local development fallback files:
 
 - `data/users.json`
 - `data/progress.json`
@@ -66,4 +52,4 @@ Data is stored locally only:
 - `/dashboard`
 - `/admin`
 
-Only emails listed in `data/adminEmails.json` or `ADMIN_EMAILS` can access the admin dashboard.
+Admin access is controlled by `ADMIN_EMAILS` and the Supabase table `app_admin_emails`.

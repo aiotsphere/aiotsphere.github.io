@@ -1,5 +1,6 @@
 import { promises as fs } from "fs";
 import path from "path";
+import { isSupabaseStorageEnabled, readSupabaseStore, writeSupabaseStore } from "@/lib/supabaseStorage";
 import type { ActivityCode, Checkin, ProgressRecord, User } from "@/lib/types";
 
 const dataDir = path.join(process.cwd(), "data");
@@ -32,12 +33,19 @@ async function ensureDataFile<K extends keyof StoreMap>(name: K) {
 }
 
 export async function readStore<K extends keyof StoreMap>(name: K): Promise<StoreMap[K]> {
+  if (isSupabaseStorageEnabled()) {
+    return readSupabaseStore(name);
+  }
   const filePath = await ensureDataFile(name);
   const raw = await fs.readFile(filePath, "utf8");
   return JSON.parse(raw || "[]") as StoreMap[K];
 }
 
 export async function writeStore<K extends keyof StoreMap>(name: K, value: StoreMap[K]) {
+  if (isSupabaseStorageEnabled()) {
+    await writeSupabaseStore(name, value);
+    return;
+  }
   const filePath = await ensureDataFile(name);
   await fs.writeFile(filePath, JSON.stringify(value, null, 2), "utf8");
 }
