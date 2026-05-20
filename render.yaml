@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: aiotsphere-laboratory
+    runtime: docker
+    plan: starter
+    autoDeploy: true
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+      - key: ADMIN_EMAILS
+        value: aiotsphere@utcc.ac.th
+    disk:
+      name: aiotsphere-json-storage
+      mountPath: /app/data
+      sizeGB: 1

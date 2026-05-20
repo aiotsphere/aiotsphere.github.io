@@ -15,6 +15,18 @@ AI Builder Camp 2026 is included as a subproject under AIoT Sphere Lab.
 - Local JSON file storage with Node.js `fs`
 - QR generation with `qrcode`
 
+## Deployment
+
+GitHub Pages cannot run this project because it uses Next.js API routes, authentication, and Node.js file storage.
+
+Deploy it as a Node.js server. The repository includes:
+
+- `Dockerfile` for production server deployment
+- `render.yaml` for Render deployment with a persistent disk mounted at `/app/data`
+- `.github/workflows/build-check.yml` for lint/build validation
+
+For full functionality, deploy to a Node host such as Render, Railway, Fly.io, a VPS, or another platform that supports persistent disk storage.
+
 ## Local Storage Files
 
 Data is stored locally only:
