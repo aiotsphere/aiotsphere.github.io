@@ -8,9 +8,7 @@ const schema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
   school: z.string().min(2),
-  educationLevel: z.string().min(1),
-  interestedTrack: z.enum(["ai-creator", "ai-builder", "aiot-innovator", "robotics"]),
-  discordUsername: z.string().min(2)
+  educationLevel: z.enum(["มัธยมศึกษาตอนปลาย", "ปวช."])
 });
 
 export async function POST(request: Request) {

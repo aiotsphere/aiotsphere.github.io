@@ -30,8 +30,8 @@ export async function registerUser(input: {
   password: string;
   school: string;
   educationLevel: string;
-  interestedTrack: TrackId;
-  discordUsername: string;
+  interestedTrack?: TrackId;
+  discordUsername?: string;
 }) {
   const users = await readStore("users");
   const normalizedEmail = input.email.trim().toLowerCase();
@@ -47,8 +47,8 @@ export async function registerUser(input: {
     passwordHash: hashPassword(input.password),
     school: input.school.trim(),
     educationLevel: input.educationLevel,
-    interestedTrack: input.interestedTrack,
-    discordUsername: input.discordUsername.trim(),
+    interestedTrack: input.interestedTrack ?? "ai-builder",
+    discordUsername: input.discordUsername?.trim() ?? "",
     status: "pending",
     role: "student",
     createdAt: new Date().toISOString()

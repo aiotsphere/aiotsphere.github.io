@@ -8,7 +8,6 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { CyberButton } from "@/components/ui/Button";
 import { useI18n } from "@/lib/i18n";
-import { tracks } from "@/lib/types";
 
 const schema = z.object({
   firstName: z.string().min(2),
@@ -16,9 +15,7 @@ const schema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
   school: z.string().min(2),
-  educationLevel: z.string().min(1),
-  interestedTrack: z.enum(["ai-creator", "ai-builder", "aiot-innovator", "robotics"]),
-  discordUsername: z.string().min(2)
+  educationLevel: z.enum(["มัธยมศึกษาตอนปลาย", "ปวช."])
 });
 
 type RegisterValues = z.infer<typeof schema>;
@@ -33,7 +30,6 @@ export function RegisterForm() {
   } = useForm<RegisterValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      interestedTrack: "ai-builder",
       educationLevel: "มัธยมศึกษาตอนปลาย"
     }
   });
@@ -85,21 +81,8 @@ export function RegisterForm() {
       <Field label={t("forms.educationLevel")} error={errors.educationLevel ? t("forms.required") : undefined}>
         <select className="input-cyber" {...register("educationLevel")}>
           <option>มัธยมศึกษาตอนปลาย</option>
-          <option>ประกาศนียบัตรวิชาชีพ</option>
-          <option>เทียบเท่า</option>
+          <option>ปวช.</option>
         </select>
-      </Field>
-      <Field label={t("forms.track")} error={errors.interestedTrack ? t("forms.required") : undefined}>
-        <select className="input-cyber" {...register("interestedTrack")}>
-          {tracks.map((track) => (
-            <option key={track.id} value={track.id}>
-              {locale === "th" ? track.titleTh : track.title}
-            </option>
-          ))}
-        </select>
-      </Field>
-      <Field label={t("forms.discord")} error={errors.discordUsername ? t("forms.required") : undefined}>
-        <input className="input-cyber" placeholder="username#0000" {...register("discordUsername")} />
       </Field>
       <div className="md:col-span-2">
         <CyberButton type="submit" className="mt-2 w-full py-4" disabled={loading}>
