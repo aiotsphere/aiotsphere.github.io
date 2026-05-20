@@ -1,0 +1,17 @@
+[
+  {
+    "id": "c4f2bd3d-4402-4c83-abf2-ee724aea59b3",
+    "userId": "e4389978-abf2-4f09-a534-b1e4f591de96",
+    "firstName": "James",
+    "lastName": "Payu",
+    "email": "chanakanx2@gmail.com",
+    "passwordHash": "98ba1d070a301b4f1361b61fc047b435:f36baadc5026d29734267173ec877699cc008552e47f82f53c54de30225f7813",
+    "school": "โรงเรียนวัดสุทธิวราราม",
+    "educationLevel": "มัธยมศึกษาตอนปลาย",
+    "interestedTrack": "ai-builder",
+    "discordUsername": "kzh_x",
+    "status": "pending",
+    "role": "admin",
+    "createdAt": "2026-05-20T06:33:59.309Z"
+  }
+]

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
+import { I18nProvider } from "@/lib/i18n";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Builder Camp 2026",
-  description: "Free AI bootcamp registration platform for future AI engineers."
+  title: "AIoT Sphere Laboratory | University of the Thai Chamber of Commerce",
+  description: "Futuristic AIoT, robotics, and cyber education laboratory platform."
 };
 
 export default function RootLayout({
@@ -26,8 +27,10 @@ export default function RootLayout({
   return (
     <html lang="th">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
-        <Toaster richColors position="top-right" theme="dark" />
+        <I18nProvider>
+          {children}
+          <Toaster richColors position="top-right" theme="dark" />
+        </I18nProvider>
       </body>
     </html>
   );

@@ -9,11 +9,11 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { CyberButton } from "@/components/ui/Button";
-import { createClient } from "@/lib/supabase/browser";
+import { useI18n } from "@/lib/i18n";
 
 const schema = z.object({
-  email: z.string().email("อีเมลไม่ถูกต้อง"),
-  password: z.string().min(1, "กรุณากรอกรหัสผ่าน")
+  email: z.string().email(),
+  password: z.string().min(1)
 });
 
 type LoginValues = z.infer<typeof schema>;
@@ -22,6 +22,7 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirectedFrom") ?? "/dashboard";
+  const { t, locale } = useI18n();
   const {
     register,
     handleSubmit,
@@ -31,13 +32,18 @@ export function LoginForm() {
   const onSubmit = async (values: LoginValues) => {
     setLoading(true);
     try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signInWithPassword(values);
-      if (error) throw error;
-      toast.success("เข้าสู่ระบบสำเร็จ");
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values)
+      });
+      if (!response.ok) {
+        throw new Error("INVALID_CREDENTIALS");
+      }
+      toast.success(t("forms.successLogin"));
       window.location.href = redirect;
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "เข้าสู่ระบบไม่สำเร็จ");
+    } catch {
+      toast.error(locale === "th" ? "อีเมลหรือรหัสผ่านไม่ถูกต้อง" : "Invalid email or password.");
     } finally {
       setLoading(false);
     }
@@ -46,21 +52,24 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <label className="block">
-        <span className="mb-2 block text-sm font-bold text-white">Email</span>
+        <span className="mb-2 block text-sm font-bold text-white">{t("forms.email")}</span>
         <input className="input-cyber" type="email" placeholder="student@email.com" {...register("email")} />
-        {errors.email ? <span className="mt-2 block text-xs text-fuchsia-300">{errors.email.message}</span> : null}
+        {errors.email ? <span className="mt-2 block text-xs text-fuchsia-300">{t("forms.required")}</span> : null}
       </label>
       <label className="block">
-        <span className="mb-2 block text-sm font-bold text-white">Password</span>
-        <input className="input-cyber" type="password" placeholder="รหัสผ่าน" {...register("password")} />
-        {errors.password ? <span className="mt-2 block text-xs text-fuchsia-300">{errors.password.message}</span> : null}
+        <span className="mb-2 block text-sm font-bold text-white">{t("forms.password")}</span>
+        <input className="input-cyber" type="password" placeholder="••••••••" {...register("password")} />
+        {errors.password ? <span className="mt-2 block text-xs text-fuchsia-300">{t("forms.required")}</span> : null}
       </label>
       <CyberButton type="submit" className="w-full py-4" disabled={loading}>
         {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <LogIn className="h-5 w-5" />}
-        เข้าสู่ระบบ
+        {t("forms.submitLogin")}
       </CyberButton>
       <p className="text-center text-sm text-silver">
-        ยังไม่มีบัญชี? <Link href="/register" className="font-bold text-cyan">สมัครเข้าร่วม</Link>
+        {t("forms.noAccount")}{" "}
+        <Link href="/register" className="font-bold text-cyan">
+          {t("forms.submitRegister")}
+        </Link>
       </p>
     </form>
   );

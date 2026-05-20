@@ -7,60 +7,58 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { CyberButton } from "@/components/ui/Button";
-import { createClient } from "@/lib/supabase/browser";
+import { useI18n } from "@/lib/i18n";
 import { tracks } from "@/lib/types";
 
 const schema = z.object({
-  firstName: z.string().min(2, "กรุณากรอกชื่อ"),
-  lastName: z.string().min(2, "กรุณากรอกนามสกุล"),
-  email: z.string().email("อีเมลไม่ถูกต้อง"),
-  school: z.string().min(2, "กรุณากรอกชื่อโรงเรียน"),
-  educationLevel: z.string().min(1, "กรุณาเลือกระดับชั้น"),
-  interestedTrack: z.string().min(1, "กรุณาเลือกแทร็ก")
+  firstName: z.string().min(2),
+  lastName: z.string().min(2),
+  email: z.string().email(),
+  password: z.string().min(6),
+  school: z.string().min(2),
+  educationLevel: z.string().min(1),
+  interestedTrack: z.enum(["ai-creator", "ai-builder", "aiot-innovator", "robotics"]),
+  discordUsername: z.string().min(2)
 });
 
 type RegisterValues = z.infer<typeof schema>;
 
 export function RegisterForm() {
   const [loading, setLoading] = useState(false);
+  const { t, locale } = useI18n();
   const {
     register,
     handleSubmit,
     formState: { errors }
   } = useForm<RegisterValues>({
     resolver: zodResolver(schema),
-    defaultValues: { interestedTrack: "ai-builder", educationLevel: "ม.ปลาย" }
+    defaultValues: {
+      interestedTrack: "ai-builder",
+      educationLevel: "มัธยมศึกษาตอนปลาย"
+    }
   });
 
   const onSubmit = async (values: RegisterValues) => {
     setLoading(true);
     try {
-      const supabase = createClient();
-      const { error: insertError } = await supabase.from("registrations").insert({
-        first_name: values.firstName,
-        last_name: values.lastName,
-        email: values.email,
-        school: values.school,
-        education_level: values.educationLevel,
-        interested_track: values.interestedTrack,
-        status: "pending"
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values)
       });
-
-      if (insertError) throw insertError;
-      toast.success("สมัครสำเร็จ เราได้รับข้อมูลของคุณแล้ว");
-      window.location.href = "/";
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error === "EMAIL_EXISTS" ? "EMAIL_EXISTS" : "REGISTER_FAILED");
+      }
+      toast.success(t("forms.successRegister"));
+      window.location.href = "/dashboard";
     } catch (error) {
-      const rawMessage = error instanceof Error ? error.message : "สมัครไม่สำเร็จ";
       const message =
-        rawMessage.toLowerCase().includes("duplicate") ||
-        rawMessage.toLowerCase().includes("registrations_email_key")
-          ? "อีเมลนี้เคยสมัครแล้ว กรุณาใช้อีเมลอื่น"
-          : rawMessage.toLowerCase().includes("row-level security")
-            ? "ยังไม่ได้อัปเดต policy ใน Supabase กรุณารัน schema.sql เวอร์ชันล่าสุด"
-            : rawMessage.toLowerCase().includes("rate limit") ||
-                rawMessage.toLowerCase().includes("too many requests")
-              ? "ระบบสมัครถูกจำกัดชั่วคราวจาก Supabase กรุณารอประมาณ 1-2 นาทีแล้วลองใหม่อีกครั้ง"
-              : rawMessage;
+        error instanceof Error && error.message === "EMAIL_EXISTS"
+          ? locale === "th"
+            ? "อีเมลนี้มีอยู่ในระบบแล้ว"
+            : "This email is already registered."
+          : t("forms.required");
       toast.error(message);
     } finally {
       setLoading(false);
@@ -69,36 +67,44 @@ export function RegisterForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 md:grid-cols-2">
-      <Field label="First Name" error={errors.firstName?.message}>
-        <input className="input-cyber" placeholder="ชื่อ" {...register("firstName")} />
+      <Field label={t("forms.firstName")} error={errors.firstName ? t("forms.required") : undefined}>
+        <input className="input-cyber" placeholder={t("forms.firstName")} {...register("firstName")} />
       </Field>
-      <Field label="Last Name" error={errors.lastName?.message}>
-        <input className="input-cyber" placeholder="นามสกุล" {...register("lastName")} />
+      <Field label={t("forms.lastName")} error={errors.lastName ? t("forms.required") : undefined}>
+        <input className="input-cyber" placeholder={t("forms.lastName")} {...register("lastName")} />
       </Field>
-      <Field label="Email" error={errors.email?.message}>
+      <Field label={t("forms.email")} error={errors.email ? t("forms.required") : undefined}>
         <input className="input-cyber" type="email" placeholder="student@email.com" {...register("email")} />
       </Field>
-      <Field label="School" error={errors.school?.message}>
-        <input className="input-cyber" placeholder="ชื่อโรงเรียน / วิทยาลัย" {...register("school")} />
+      <Field label={t("forms.password")} error={errors.password ? t("forms.required") : undefined}>
+        <input className="input-cyber" type="password" placeholder="••••••••" {...register("password")} />
       </Field>
-      <Field label="Education Level" error={errors.educationLevel?.message}>
+      <Field label={t("forms.school")} error={errors.school ? t("forms.required") : undefined}>
+        <input className="input-cyber" placeholder={t("forms.school")} {...register("school")} />
+      </Field>
+      <Field label={t("forms.educationLevel")} error={errors.educationLevel ? t("forms.required") : undefined}>
         <select className="input-cyber" {...register("educationLevel")}>
-          <option>ม.ปลาย</option>
-          <option>ปวช.</option>
+          <option>มัธยมศึกษาตอนปลาย</option>
+          <option>ประกาศนียบัตรวิชาชีพ</option>
           <option>เทียบเท่า</option>
         </select>
       </Field>
-      <Field label="Interested Track" error={errors.interestedTrack?.message}>
+      <Field label={t("forms.track")} error={errors.interestedTrack ? t("forms.required") : undefined}>
         <select className="input-cyber" {...register("interestedTrack")}>
           {tracks.map((track) => (
-            <option key={track.id} value={track.id}>{track.title}</option>
+            <option key={track.id} value={track.id}>
+              {locale === "th" ? track.titleTh : track.title}
+            </option>
           ))}
         </select>
+      </Field>
+      <Field label={t("forms.discord")} error={errors.discordUsername ? t("forms.required") : undefined}>
+        <input className="input-cyber" placeholder="username#0000" {...register("discordUsername")} />
       </Field>
       <div className="md:col-span-2">
         <CyberButton type="submit" className="mt-2 w-full py-4" disabled={loading}>
           {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
-          สมัครเข้าร่วม
+          {t("forms.submitRegister")}
         </CyberButton>
       </div>
     </form>

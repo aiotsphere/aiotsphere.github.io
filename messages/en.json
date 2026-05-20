@@ -1,0 +1,152 @@
+{
+  "brand": {
+    "name": "AIoT Sphere Laboratory",
+    "short": "AIoT Sphere Lab",
+    "university": "University of the Thai Chamber of Commerce"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "vision": "Vision",
+    "background": "Background",
+    "mission": "Mission",
+    "administrators": "Administrators",
+    "camp": "AI Builder Camp",
+    "sphereos": "sphereOS",
+    "partnership": "Partnership",
+    "activities": "Activities",
+    "progress": "Progress",
+    "checkin": "Check-in",
+    "admin": "Admin",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  },
+  "home": {
+    "eyebrow": "AI, Robotics, and Cyber Education Laboratory",
+    "headline": "AIoT Sphere Laboratory",
+    "subheadline": "University of the Thai Chamber of Commerce",
+    "description": "A modern laboratory platform for developing capability in artificial intelligence, the Internet of Things, robotics, and digital innovation for students and learners within a practical education ecosystem.",
+    "primaryCta": "Explore the Laboratory",
+    "secondaryCta": "View AI Builder Camp",
+    "introTitle": "Introduction to AIoT Sphere",
+    "intro": "AIoT Sphere Laboratory is an experimental learning environment that connects research, prototyping, and AIoT knowledge transfer into practical outcomes.",
+    "historyTitle": "History and Background",
+    "history": "AIoT Sphere was established from the concept of creating a future space that integrates Artificial Intelligence, Internet of Things, Interactive Experience, and an Innovation Ecosystem.",
+    "missionTitle": "Mission",
+    "mission": "To develop an AI innovation ecosystem that connects learning, experimentation, collaborative prototyping, and practical implementation with business and society.",
+    "visionTitle": "Vision",
+    "vision": "To drive UTCC toward becoming a model university in the development of Physical AI and AI Orchestrated Systems for operational efficiency, sustainability, and globally scalable innovation.",
+    "campTitle": "AI Builder Camp within AIoT Sphere",
+    "campText": "AI Builder Camp 2026 is a subproject of AIoT Sphere Laboratory designed for upper secondary students and vocational learners to begin building AI projects systematically.",
+    "activitiesTitle": "Featured Activities",
+    "innovationTitle": "Innovation Showcase",
+    "photosTitle": "Laboratory Photos",
+    "photosText": "This section is reserved for future laboratory photos, equipment, robotics, and learning activities.",
+    "locationTitle": "Laboratory Location",
+    "location": "UTCC AIoT Sphere Laboratory, School of Engineering, 126/1 Building 7, 1st Floor, Soi Vibhavadi Rangsit 2, Vibhavadi Rangsit Road, Ratchadaphisek, Din Daeng, Bangkok 10400",
+    "map": "Futuristic laboratory map placeholder"
+  },
+  "about": {
+    "headline": "About AIoT Sphere Laboratory",
+    "description": "The laboratory was developed to elevate intelligent technology education into a structured, standards-based, and innovation-driven learning environment.",
+    "history": "AIoT Sphere Laboratory was founded from the concept of creating a shared space for experimentation, development, and knowledge transfer in AI, IoT, and Robotics through hands-on learning.",
+    "why": "The laboratory was created to bridge the gap between theory and real prototyping, enabling learners to analyze, experiment, and improve their work through engineering processes.",
+    "objectives": "The educational objectives emphasize advanced digital skills, teamwork, technology ethics, and the ability to communicate innovation outcomes.",
+    "integration": "The integration of AI, IoT, and Robotics helps learners understand intelligent systems from data and sensors to AI models and real device control.",
+    "goals": "The ultimate goal is to cultivate learners who can create innovation, develop foundational research skills, and continue into higher education or technology careers."
+  },
+  "institution": {
+    "visionTitle": "Vision",
+    "visionSubtitle": "Strategic direction of AIoT Sphere Laboratory",
+    "visionBody": "To drive UTCC toward becoming a model university in the development of Physical AI and AI Orchestrated Systems in order to enhance operational efficiency, create sustainability, and develop innovation that can be extended to real-world implementation and global commercial development.",
+    "backgroundTitle": "Background",
+    "backgroundSubtitle": "From a future space to a tangible innovation ecosystem",
+    "backgroundIntro": "AIoT Sphere was established from the concept of creating a “future space” that brings together Artificial Intelligence (AI), Internet of Things (IoT), Interactive Experience, and an Innovation Ecosystem to transform learning, innovation development, and business collaboration into tangible reality.",
+    "backgroundOrigin": "The origin of AIoT Sphere came from the recognition that the world is entering an era where AI will become a fundamental infrastructure across every industry, including education, healthcare, business, services, and everyday life. At the same time, many people still perceive AI as distant and difficult to access.",
+    "backgroundEcosystem": "AIoT Sphere was therefore designed to be more than a traditional laboratory. It is a “Living Innovation Ecosystem” where people can learn, experiment, experience, and co-create real innovation through multiple spaces and projects.",
+    "backgroundConceptTitle": "Core Concept",
+    "backgroundConcept": "The core concept of AIoT Sphere is to create “AI that works in the real world” (Applied & Human-Centric AI), emphasizing the connection between technology, people, business, and experience to generate positive impact at the university, industry, and societal levels.",
+    "backgroundCurrent": "AIoT Sphere is currently being developed as a learning center for AI and emerging technology, an experimentation and innovation showcase space, a sandbox for prototype co-development with business sectors, a community hub for students, developers, startups, and partners, and a showcase platform for AI solutions and Physical AI innovation.",
+    "backgroundGoal": "Its long-term goal is to strengthen an AI ecosystem that sustainably connects education, business, and innovation, while elevating Thailand toward becoming a regional center for AI and future technology.",
+    "missionTitle": "Mission",
+    "missionSubtitle": "Core role of AIoT Sphere Laboratory",
+    "missionBody": "To develop an AI innovation ecosystem that connects learning, experimentation, collaborative prototyping, and real-world implementation, while advancing knowledge in Physical AI, AI Orchestrated Systems, Applied AI, and Human-Centric AI to create sustainable value for the university, business sectors, industry, and society."
+  },
+  "ecosystem": {
+    "items": "AI Beverage Innovation Lab (AIBI Lab)|AIX Pavilion|Interactive AI Experience|AI Podcast & Media Studio|Physical AI Research Zone|AI Startup & Innovation Showcase|AI Workshop & Community Space",
+    "current": "Learning center for AI and Emerging Technology|Experimentation and innovation showcase space|Sandbox for prototype co-development with business sectors|Community Hub for students, developers, startups, and partners|Showcase Platform for AI Solution and Physical AI Innovation"
+  },
+  "placeholder": {
+    "sphereosTitle": "sphereOS",
+    "sphereosSubtitle": "The AI system of AIoT Sphere Laboratory",
+    "sphereosBody": "This page is reserved for sphereOS, the AI system of the laboratory. No AI system is currently published here.",
+    "partnershipTitle": "Partnership",
+    "partnershipSubtitle": "Space for innovation collaboration",
+    "partnershipBody": "This page is reserved for future partnership information with education, business, industry, startup, and ecosystem partners."
+  },
+  "contact": {
+    "title": "Contact Information",
+    "lab": "UTCC AIoT Sphere Laboratory, School of Engineering",
+    "address": "126/1 Building 7, 1st Floor, Soi Vibhavadi Rangsit 2, Vibhavadi Rangsit Road, Ratchadaphisek, Din Daeng, Bangkok 10400",
+    "phone": "(+66) 2-697-6705",
+    "email": "aiotsphere@utcc.ac.th",
+    "discord": "null"
+  },
+  "camp": {
+    "headline": "AI Builder Camp 2026",
+    "subtitle": "A subproject under AIoT Sphere Laboratory",
+    "description": "An AI skills camp for upper secondary students and interested learners who want to begin building web applications, agents, and innovation prototypes with AI.",
+    "details": "Camp Details",
+    "tracks": "Learning Tracks",
+    "benefits": "Participant Benefits",
+    "schedule": "Schedule",
+    "faq": "FAQ",
+    "registration": "Registration",
+    "qrTitle": "Registration QR Code",
+    "qrDownload": "Download QR Code"
+  },
+  "forms": {
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "password": "Password",
+    "school": "School or Institution",
+    "educationLevel": "Education Level",
+    "track": "Interested Track",
+    "discord": "Discord Username",
+    "submitRegister": "Register",
+    "submitLogin": "Login",
+    "already": "Already have an account?",
+    "noAccount": "Do not have an account?",
+    "required": "Please complete all required fields.",
+    "successRegister": "Registration completed.",
+    "successLogin": "Login successful."
+  },
+  "progress": {
+    "headline": "Track Progress System",
+    "description": "Learners can monitor completed activities, XP, and locked activity status across each learning track.",
+    "percentage": "Progress",
+    "completed": "Completed Activities",
+    "locked": "Locked",
+    "xp": "XP"
+  },
+  "checkin": {
+    "headline": "Activity Check-in",
+    "description": "Enter the instructor-generated activity code to confirm attendance and increase progress in your learning track.",
+    "code": "Activity Code",
+    "submit": "Verify Code",
+    "success": "Check-in completed.",
+    "failed": "The code is invalid or unavailable."
+  },
+  "admin": {
+    "headline": "Admin Command Center",
+    "registrations": "Registrations",
+    "search": "Search name, email, or school",
+    "filter": "Filter by track",
+    "createCode": "Create Activity Code",
+    "export": "Export CSV",
+    "checkins": "Check-in Records"
+  }
+}

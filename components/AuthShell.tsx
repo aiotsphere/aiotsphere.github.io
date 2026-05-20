@@ -20,7 +20,7 @@ export function AuthShell({
             <span className="grid h-11 w-11 place-items-center rounded-2xl border border-cyan/50 bg-cyan/10 shadow-neon">
               <Cpu className="h-5 w-5 text-cyan" />
             </span>
-            <span className="font-black uppercase tracking-[0.16em] text-white">AI Builder Camp</span>
+            <span className="font-black uppercase tracking-[0.16em] text-white">AIoT Sphere Lab</span>
           </Link>
           <section className="glass rounded-[2rem] p-6 md:p-9">
             <div className="mb-8 text-center">

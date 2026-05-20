@@ -1,0 +1,28 @@
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { registerUser, setSession, publicUser } from "@/lib/auth";
+
+const schema = z.object({
+  firstName: z.string().min(2),
+  lastName: z.string().min(2),
+  email: z.string().email(),
+  password: z.string().min(6),
+  school: z.string().min(2),
+  educationLevel: z.string().min(1),
+  interestedTrack: z.enum(["ai-creator", "ai-builder", "aiot-innovator", "robotics"]),
+  discordUsername: z.string().min(2)
+});
+
+export async function POST(request: Request) {
+  const parsed = schema.safeParse(await request.json());
+  if (!parsed.success) {
+    return NextResponse.json({ error: "INVALID_INPUT" }, { status: 400 });
+  }
+  try {
+    const user = await registerUser(parsed.data);
+    await setSession(user);
+    return NextResponse.json({ user: await publicUser(user) });
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "REGISTER_FAILED" }, { status: 400 });
+  }
+}
