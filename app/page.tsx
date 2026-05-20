@@ -94,18 +94,6 @@ export default function Home() {
           </div>
         </Section>
 
-        <Section eyebrow="Innovation" title={t("home.innovationTitle")}>
-          <div className="grid gap-5 lg:grid-cols-3">
-            {["AI Vision Station", "Robotics Control Bench", "Cyber Learning Wall"].map((item) => (
-              <div key={item} className="relative min-h-56 overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-6">
-                <div className="absolute inset-0 bg-cyber-grid bg-[length:32px_32px] opacity-30" />
-                <Bot className="relative h-10 w-10 text-cyan" />
-                <h3 className="relative mt-16 text-2xl font-black text-white">{item}</h3>
-              </div>
-            ))}
-          </div>
-        </Section>
-
         <Section eyebrow="Gallery" title={t("home.photosTitle")}>
           <div className="grid gap-5 lg:grid-cols-[1fr_.75fr]">
             <div className="grid min-h-72 place-items-center rounded-[1.5rem] border border-dashed border-cyan/35 bg-white/[0.035] p-8 text-center">
@@ -123,8 +111,21 @@ export default function Home() {
                 <p>{t("contact.email")}</p>
                 <p>Discord: {t("contact.discord")}</p>
               </div>
-              <div className="mt-6 grid min-h-48 place-items-center rounded-[1rem] border border-cyan/25 bg-cyan/5">
-                <p className="text-center text-sm font-bold uppercase tracking-[0.2em] text-cyan">{t("home.map")}</p>
+              <div className="mt-6 overflow-hidden rounded-[1rem] border border-cyan/25 bg-cyan/5">
+                <iframe
+                  title="UTCC AIoT Sphere Laboratory Google Map"
+                  src="https://www.google.com/maps?q=%E0%B8%AB%E0%B9%89%E0%B8%AD%E0%B8%87%E0%B8%9B%E0%B8%8F%E0%B8%B4%E0%B8%9A%E0%B8%B1%E0%B8%95%E0%B8%B4%E0%B8%81%E0%B8%B2%E0%B8%A3%20UTCC%20AIoT%20Sphere%20%E0%B8%84%E0%B8%93%E0%B8%B0%E0%B8%A7%E0%B8%B4%E0%B8%A8%E0%B8%A7%E0%B8%81%E0%B8%A3%E0%B8%A3%E0%B8%A1%E0%B8%A8%E0%B8%B2%E0%B8%AA%E0%B8%95%E0%B8%A3%E0%B9%8C%20126%2F1%20%E0%B8%AD%E0%B8%B2%E0%B8%84%E0%B8%B2%E0%B8%A3%207%20%E0%B8%8A%E0%B8%B1%E0%B9%89%E0%B8%99%201%20%E0%B8%8B%E0%B8%AD%E0%B8%A2%E0%B8%A7%E0%B8%B4%E0%B8%A0%E0%B8%B2%E0%B8%A7%E0%B8%94%E0%B8%B5%E0%B8%A3%E0%B8%B1%E0%B8%87%E0%B8%AA%E0%B8%B4%E0%B8%95%202%20%E0%B8%96%E0%B8%99%E0%B8%99%E0%B8%A7%E0%B8%B4%E0%B8%A0%E0%B8%B2%E0%B8%A7%E0%B8%94%E0%B8%B5%E0%B8%A3%E0%B8%B1%E0%B8%87%E0%B8%AA%E0%B8%B4%E0%B8%95%20%E0%B9%81%E0%B8%82%E0%B8%A7%E0%B8%87%E0%B8%A3%E0%B8%B1%E0%B8%8A%E0%B8%94%E0%B8%B2%E0%B8%A0%E0%B8%B4%E0%B9%80%E0%B8%A9%E0%B8%81%20%E0%B9%80%E0%B8%82%E0%B8%95%E0%B8%94%E0%B8%B4%E0%B8%99%E0%B9%81%E0%B8%94%E0%B8%87%20%E0%B8%81%E0%B8%A3%E0%B8%B8%E0%B8%87%E0%B9%80%E0%B8%97%E0%B8%9E%E0%B8%A1%E0%B8%AB%E0%B8%B2%E0%B8%99%E0%B8%84%E0%B8%A3%2010400&output=embed"
+                  className="h-72 w-full border-0"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
+              </div>
+              <div className="mt-4">
+                <CyberButton href="https://maps.app.goo.gl/3sYzyfpHdS6Dqahu6?g_st=ic" variant="secondary" className="w-full">
+                  {t("home.map")}
+                  <ArrowRight className="h-4 w-4" />
+                </CyberButton>
               </div>
             </div>
           </div>
