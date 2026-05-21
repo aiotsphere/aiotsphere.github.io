@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { CyberBackground } from "@/components/CyberBackground";
 import { Navbar } from "@/components/Navbar";
 import { CyberButton } from "@/components/ui/Button";
+import { getCurrentUser } from "@/lib/clientStore";
 import { useI18n } from "@/lib/i18n";
 import type { Registration } from "@/lib/types";
 
@@ -15,16 +16,13 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/auth/me")
-      .then((response) => response.json())
-      .then((data) => {
-        if (!data.user) {
-          window.location.href = "/camp/login?redirectedFrom=/dashboard";
-          return;
-        }
-        setUser(data.user);
-        setLoading(false);
-      });
+    const currentUser = getCurrentUser();
+    if (!currentUser) {
+      window.location.href = "/camp/login?redirectedFrom=/dashboard";
+      return;
+    }
+    setUser(currentUser);
+    setLoading(false);
   }, []);
 
   return (

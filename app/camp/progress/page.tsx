@@ -4,6 +4,7 @@ import { Award, BadgeCheck, Lock, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CyberBackground } from "@/components/CyberBackground";
 import { Navbar } from "@/components/Navbar";
+import { getBadgeProgress, getCurrentUser } from "@/lib/clientStore";
 import { useI18n } from "@/lib/i18n";
 import type { TrackId } from "@/lib/types";
 
@@ -32,18 +33,13 @@ export default function CampProgressPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/progress")
-      .then(async (response) => {
-        if (response.status === 401) {
-          window.location.href = "/camp/login?redirectedFrom=/camp/progress";
-          return null;
-        }
-        return response.json();
-      })
-      .then((payload) => {
-        setData(payload);
-        setLoading(false);
-      });
+    const user = getCurrentUser();
+    if (!user) {
+      window.location.href = "/camp/login?redirectedFrom=/camp/progress";
+      return;
+    }
+    setData({ progress: getBadgeProgress(user.userId) });
+    setLoading(false);
   }, []);
 
   const progress = data?.progress;

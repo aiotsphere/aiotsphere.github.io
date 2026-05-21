@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { CyberBackground } from "@/components/CyberBackground";
 import { Navbar } from "@/components/Navbar";
 import { CyberButton } from "@/components/ui/Button";
+import { createActivityCode, getAdminSummary, getCurrentUser, isAdminEmail } from "@/lib/clientStore";
 import { useI18n } from "@/lib/i18n";
 import { activities, tracks } from "@/lib/types";
 import type { ActivityCode, CampRegistration, Checkin, ProgressRecord, Registration } from "@/lib/types";
@@ -28,17 +29,12 @@ export default function AdminPage() {
   const [loadingCode, setLoadingCode] = useState(false);
 
   const load = () => {
-    fetch("/api/admin/summary")
-      .then(async (response) => {
-        if (response.status === 403) {
-          window.location.href = "/camp/login?redirectedFrom=/admin";
-          return null;
-        }
-        return response.json();
-      })
-      .then((payload) => {
-        if (payload) setData(payload);
-      });
+    const user = getCurrentUser();
+    if (!user || !isAdminEmail(user.email)) {
+      window.location.href = "/camp/login?redirectedFrom=/admin";
+      return;
+    }
+    setData(getAdminSummary());
   };
 
   useEffect(load, []);
@@ -57,19 +53,15 @@ export default function AdminPage() {
 
   const createCode = async () => {
     setLoadingCode(true);
-    const response = await fetch("/api/admin/activity-codes", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ activityId: trackId, maxUses: 80, expiresInHours: 24 })
-    });
-    setLoadingCode(false);
-    if (!response.ok) {
+    try {
+      const activityCode = createActivityCode(trackId, 80, 24);
+      toast.success(`${locale === "th" ? "สร้างรหัสแล้ว" : "Code created"}: ${activityCode.code}`);
+      load();
+    } catch {
       toast.error(locale === "th" ? "ไม่สามารถสร้างรหัสได้" : "Could not create code.");
-      return;
+    } finally {
+      setLoadingCode(false);
     }
-    const payload = await response.json();
-    toast.success(`${locale === "th" ? "สร้างรหัสแล้ว" : "Code created"}: ${payload.activityCode.code}`);
-    load();
   };
 
   const exportCsv = () => {

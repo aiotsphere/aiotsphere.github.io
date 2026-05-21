@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { CyberButton } from "@/components/ui/Button";
+import { registerMembership } from "@/lib/clientStore";
 import { useI18n } from "@/lib/i18n";
 
 const schema = z.object({
@@ -37,15 +38,7 @@ export function RegisterForm() {
   const onSubmit = async (values: RegisterValues) => {
     setLoading(true);
     try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values)
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error === "EMAIL_EXISTS" ? "EMAIL_EXISTS" : "REGISTER_FAILED");
-      }
+      await registerMembership(values);
       toast.success(t("forms.successRegister"));
       window.location.href = "/camp/progress";
     } catch (error) {

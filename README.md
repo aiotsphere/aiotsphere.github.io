@@ -1,55 +1,41 @@
 # AIoT Sphere Laboratory
 
-Futuristic bilingual laboratory platform for **AIoT Sphere Laboratory, University of the Thai Chamber of Commerce**.
+Static GitHub Pages build for **AIoT Sphere Laboratory** and **AI Builder Camp 2026**.
 
-AI Builder Camp 2026 is included as a subproject under AIoT Sphere Lab.
+## Deployment
+
+This project is configured for GitHub Pages only.
+
+- Push to `main`
+- GitHub Actions runs lint and static export
+- The generated `out` folder is deployed by `actions/deploy-pages`
+
+## Runtime Storage
+
+Because GitHub Pages cannot run a server or database, membership, camp registration, admin codes, and badge progress use browser `localStorage`.
+
+That means the full demo system works on GitHub Pages without Supabase or Vercel, but data is stored per browser/device.
 
 ## Stack
 
-- Next.js 15
+- Next.js static export
 - TypeScript
 - TailwindCSS
 - Framer Motion
 - Lucide React
 - Sonner
-- Supabase database storage in production
-- Local JSON file storage fallback for development
-- QR generation with `qrcode`
 
-## Free Deployment
+## Main Routes
 
-GitHub Pages cannot run this project because it uses Next.js API routes and authentication.
-
-Use **Vercel Hobby + Supabase Free** for a free deployment:
-
-- `.github/workflows/build-check.yml` for lint/build validation
-- `supabase/schema.sql` for database setup
-- `DEPLOY_FREE_SUPABASE_VERCEL.md` for step-by-step deployment
-
-If Supabase environment variables are missing, the app falls back to local JSON files for development.
-
-## Local Storage Files
-
-Local development fallback files:
-
-- `data/users.json`
-- `data/progress.json`
-- `data/activityCodes.json`
-- `data/checkins.json`
-- `data/adminEmails.json`
-
-## Routes
-
-- `/` AIoT Sphere Laboratory home
+- `/`
 - `/about`
 - `/administrators`
-- `/ai-builder-camp`
-- `/activities`
-- `/progress`
-- `/checkin`
-- `/login`
-- `/register`
-- `/dashboard`
+- `/camp`
+- `/camp/ai-builder-camp`
+- `/camp/register`
+- `/camp/login`
+- `/camp/checkin`
+- `/camp/progress`
 - `/admin`
 
-Admin access is controlled by `ADMIN_EMAILS` and the Supabase table `app_admin_emails`.
+Admin access is determined client-side by the configured admin email in `lib/clientStore.ts`.

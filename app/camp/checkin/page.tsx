@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { CyberBackground } from "@/components/CyberBackground";
 import { Navbar } from "@/components/Navbar";
 import { CyberButton } from "@/components/ui/Button";
+import { claimBadge } from "@/lib/clientStore";
 import { useI18n } from "@/lib/i18n";
 
 export default function CampCheckinPage() {
@@ -16,23 +17,20 @@ export default function CampCheckinPage() {
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
-    const response = await fetch("/api/checkin", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code })
-    });
-    setLoading(false);
-    if (response.status === 401) {
-      window.location.href = "/camp/login?redirectedFrom=/camp/checkin";
-      return;
-    }
-    if (!response.ok) {
+    try {
+      claimBadge(code);
+      toast.success(t("checkin.success"));
+      setCode("");
+      window.location.href = "/camp/progress";
+    } catch (error) {
+      if (error instanceof Error && error.message === "UNAUTHORIZED") {
+        window.location.href = "/camp/login?redirectedFrom=/camp/checkin";
+        return;
+      }
       toast.error(t("checkin.failed"));
-      return;
+    } finally {
+      setLoading(false);
     }
-    toast.success(t("checkin.success"));
-    setCode("");
-    window.location.href = "/camp/progress";
   };
 
   return (

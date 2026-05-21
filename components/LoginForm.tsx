@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { CyberButton } from "@/components/ui/Button";
+import { login } from "@/lib/clientStore";
 import { useI18n } from "@/lib/i18n";
 
 const schema = z.object({
@@ -32,14 +33,7 @@ export function LoginForm() {
   const onSubmit = async (values: LoginValues) => {
     setLoading(true);
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values)
-      });
-      if (!response.ok) {
-        throw new Error("INVALID_CREDENTIALS");
-      }
+      await login(values);
       toast.success(t("forms.successLogin"));
       window.location.href = redirect;
     } catch {

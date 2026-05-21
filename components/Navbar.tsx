@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { CyberButton } from "@/components/ui/Button";
+import { getCurrentUser, logout as logoutStore } from "@/lib/clientStore";
 import { useI18n, type Locale } from "@/lib/i18n";
 
 export function Navbar() {
@@ -14,13 +15,18 @@ export function Navbar() {
   const { t, locale, setLocale } = useI18n();
 
   useEffect(() => {
-    fetch("/api/auth/me")
-      .then((response) => response.json())
-      .then((data) => {
-        setSignedIn(Boolean(data.user));
-        setIsAdmin(data.user?.role === "admin");
-      })
-      .catch(() => setSignedIn(false));
+    const syncUser = () => {
+      const user = getCurrentUser();
+      setSignedIn(Boolean(user));
+      setIsAdmin(user?.role === "admin");
+    };
+    syncUser();
+    window.addEventListener("aiot-store-change", syncUser);
+    window.addEventListener("storage", syncUser);
+    return () => {
+      window.removeEventListener("aiot-store-change", syncUser);
+      window.removeEventListener("storage", syncUser);
+    };
   }, []);
 
   useEffect(() => {
@@ -31,7 +37,7 @@ export function Navbar() {
   }, [open]);
 
   const logout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
+    logoutStore();
     toast.success(locale === "th" ? "ออกจากระบบแล้ว" : "Logged out");
     window.location.href = "/";
   };
