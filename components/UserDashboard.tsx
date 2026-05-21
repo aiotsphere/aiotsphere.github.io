@@ -5,11 +5,8 @@ import { CyberBackground } from "@/components/CyberBackground";
 import { DashboardCard } from "@/components/DashboardCard";
 import { CyberButton } from "@/components/ui/Button";
 import type { Registration } from "@/lib/types";
-import { tracks } from "@/lib/types";
 
 export function UserDashboard({ registration }: { registration: Registration | null }) {
-  const track = tracks.find((item) => item.id === registration?.interestedTrack);
-
   return (
     <>
       <CyberBackground />
@@ -27,7 +24,7 @@ export function UserDashboard({ registration }: { registration: Registration | n
 
           <div className="grid gap-5 md:grid-cols-3">
             <DashboardCard title="Registration Status" value={registration?.status ?? "Pending"} icon={<CheckCircle2 />} />
-            <DashboardCard title="Selected Track" value={track?.title ?? "-"} icon={<Cpu />} />
+            <DashboardCard title="Membership" value="AIoT Sphere" icon={<Cpu />} />
             <DashboardCard title="Laboratory" value="AIoT Sphere" icon={<Sparkles />} />
           </div>
         </div>

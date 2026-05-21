@@ -1,6 +1,6 @@
 "use client";
 
-import { Cpu, Languages, LayoutDashboard, LogOut, Menu, X } from "lucide-react";
+import { ChevronDown, Cpu, Languages, LayoutDashboard, LogIn, LogOut, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -39,40 +39,86 @@ export function Navbar() {
   const links = [
     { href: "/", label: t("nav.home") },
     { href: "/about", label: t("nav.about") },
-    { href: "/vision", label: t("nav.vision") },
-    { href: "/background", label: t("nav.background") },
-    { href: "/mission", label: t("nav.mission") },
-    { href: "/administrators", label: t("nav.administrators") },
-    { href: "/ai-builder-camp", label: t("nav.camp") },
+    { href: "/contact", label: t("nav.contact") },
     { href: "/sphereos", label: t("nav.sphereos") },
-    { href: "/partnership", label: t("nav.partnership") },
-    { href: "/activities", label: t("nav.activities") },
-    { href: "/progress", label: t("nav.progress") },
-    { href: "/checkin", label: t("nav.checkin") }
+    { href: "/seminar", label: t("nav.seminar") },
+    { href: "/administrators", label: t("nav.administrators") },
+    { href: "/camp", label: t("nav.camp") }
+  ];
+
+  const campLinks = [
+    { href: "/camp/ai-builder-camp", label: t("nav.aiBuilderCamp") },
+    { href: "/camp/register", label: t("nav.register") },
+    { href: "/camp/login", label: t("nav.login") },
+    { href: "/camp/checkin", label: t("nav.checkin") },
+    { href: "/camp/progress", label: t("nav.progress") }
   ];
 
   return (
     <>
       <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-navy/70 backdrop-blur-xl">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-6">
-          <button
-            className="grid h-11 w-11 place-items-center rounded-2xl border border-white/10 bg-white/5 text-white transition hover:border-cyan/50 hover:text-cyan hover:shadow-neon"
-            onClick={() => setOpen(true)}
-            aria-label="Open menu"
-          >
-            <Menu className="h-6 w-6" />
-          </button>
-
           <Link href="/" className="flex items-center gap-3">
             <span className="grid h-10 w-10 place-items-center rounded-2xl border border-cyan/50 bg-cyan/10 shadow-neon">
               <Cpu className="h-5 w-5 text-cyan" />
             </span>
             <span className="text-sm font-black uppercase tracking-[0.16em] text-white md:text-base">
-              AIoT Sphere Lab
+              AIoT Sphere
             </span>
           </Link>
 
-          <LanguageSwitcher locale={locale} setLocale={setLocale} compact />
+          <div className="hidden items-center gap-1 lg:flex">
+            {links.map((link) =>
+              link.href === "/camp" ? (
+                <div key={link.href} className="group relative">
+                  <Link
+                    href={link.href}
+                    className="inline-flex items-center gap-1 rounded-full px-3 py-2 text-sm font-bold text-silver transition hover:bg-cyan/10 hover:text-white"
+                  >
+                    {link.label}
+                    <ChevronDown className="h-4 w-4" />
+                  </Link>
+                  <div className="invisible absolute left-1/2 top-full w-56 -translate-x-1/2 pt-3 opacity-0 transition group-hover:visible group-hover:opacity-100">
+                    <div className="glass overflow-hidden rounded-2xl border border-cyan/20 p-2 shadow-[0_0_45px_rgba(0,209,255,.16)]">
+                      {campLinks.map((campLink) => (
+                        <Link
+                          key={campLink.href}
+                          href={campLink.href}
+                          className="block rounded-xl px-3 py-2 text-sm font-bold text-silver transition hover:bg-cyan/10 hover:text-white"
+                        >
+                          {campLink.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="rounded-full px-3 py-2 text-sm font-bold text-silver transition hover:bg-cyan/10 hover:text-white"
+                >
+                  {link.label}
+                </Link>
+              )
+            )}
+          </div>
+
+          <div className="hidden items-center gap-3 lg:flex">
+            <LanguageSwitcher locale={locale} setLocale={setLocale} compact />
+            <CyberButton href={signedIn ? "/dashboard" : "/camp/login"} variant="secondary" className="px-4 py-2">
+              {signedIn ? <LayoutDashboard className="h-4 w-4" /> : <LogIn className="h-4 w-4" />}
+              {signedIn ? t("nav.dashboard") : t("nav.login")}
+            </CyberButton>
+          </div>
+
+          <button
+            className="grid h-11 w-11 place-items-center rounded-2xl border border-white/10 bg-white/5 text-white transition hover:border-cyan/50 hover:text-cyan hover:shadow-neon lg:hidden"
+            onClick={() => setOpen(true)}
+            aria-label="Open menu"
+          >
+            <Menu className="h-6 w-6" />
+          </button>
         </nav>
       </header>
 
@@ -109,15 +155,30 @@ export function Navbar() {
 
             <nav className="mt-6 flex-1 space-y-2 overflow-y-auto pr-1">
               {links.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className="group flex items-center justify-between rounded-2xl border border-transparent px-4 py-3 text-sm font-bold text-silver transition hover:border-cyan/30 hover:bg-cyan/10 hover:text-white"
-                >
-                  {link.label}
-                  <span className="h-1.5 w-1.5 rounded-full bg-cyan opacity-0 shadow-neon transition group-hover:opacity-100" />
-                </Link>
+                <div key={link.href}>
+                  <Link
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    className="group flex items-center justify-between rounded-2xl border border-transparent px-4 py-3 text-sm font-bold text-silver transition hover:border-cyan/30 hover:bg-cyan/10 hover:text-white"
+                  >
+                    {link.label}
+                    <span className="h-1.5 w-1.5 rounded-full bg-cyan opacity-0 shadow-neon transition group-hover:opacity-100" />
+                  </Link>
+                  {link.href === "/camp" ? (
+                    <div className="ml-4 mt-1 space-y-1 border-l border-cyan/20 pl-3">
+                      {campLinks.map((campLink) => (
+                        <Link
+                          key={campLink.href}
+                          href={campLink.href}
+                          onClick={() => setOpen(false)}
+                          className="block rounded-2xl px-4 py-2 text-sm font-bold text-silver transition hover:bg-cyan/10 hover:text-white"
+                        >
+                          {campLink.label}
+                        </Link>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
               ))}
             </nav>
 
@@ -142,8 +203,9 @@ export function Navbar() {
                   </button>
                 </>
               ) : (
-                <CyberButton href="/register" className="w-full" onClick={() => setOpen(false)}>
-                  {t("nav.register")}
+                <CyberButton href="/camp/login" className="w-full" onClick={() => setOpen(false)}>
+                  <LogIn className="h-4 w-4" />
+                  {t("nav.login")}
                 </CyberButton>
               )}
             </div>

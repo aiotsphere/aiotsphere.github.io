@@ -40,7 +40,7 @@ export function Hero() {
             transition={{ duration: 0.7, delay: 0.28 }}
             className="mt-9 flex flex-col gap-4 sm:flex-row"
           >
-            <CyberButton href="/register" className="px-7 py-4 text-base">
+            <CyberButton href="/camp/register" className="px-7 py-4 text-base">
               สมัครเข้าร่วม
               <ArrowRight className="h-5 w-5" />
             </CyberButton>

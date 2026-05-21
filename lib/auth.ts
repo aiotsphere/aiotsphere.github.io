@@ -2,7 +2,8 @@ import { cookies } from "next/headers";
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from "crypto";
 import { getUserRole } from "@/lib/adminAccess";
 import { readStore, writeStore } from "@/lib/storage";
-import type { Registration, TrackId, User } from "@/lib/types";
+import { aiBuilderCampId } from "@/lib/types";
+import type { CampId, Registration, User } from "@/lib/types";
 
 export const sessionCookieName = "aiot_session";
 
@@ -30,8 +31,6 @@ export async function registerUser(input: {
   password: string;
   school: string;
   educationLevel: string;
-  interestedTrack?: TrackId;
-  discordUsername?: string;
 }) {
   const users = await readStore("users");
   const normalizedEmail = input.email.trim().toLowerCase();
@@ -47,14 +46,30 @@ export async function registerUser(input: {
     passwordHash: hashPassword(input.password),
     school: input.school.trim(),
     educationLevel: input.educationLevel,
-    interestedTrack: input.interestedTrack ?? "ai-builder",
-    discordUsername: input.discordUsername?.trim() ?? "",
     status: "pending",
     role: "student",
     createdAt: new Date().toISOString()
   };
   await writeStore("users", [user, ...users]);
   return user;
+}
+
+export async function registerForCamp(userId: string, campId: CampId = aiBuilderCampId) {
+  const registrations = await readStore("campRegistrations");
+  const existing = registrations.find((item) => item.userId === userId && item.campId === campId);
+  if (existing) return existing;
+
+  const now = new Date().toISOString();
+  const registration = {
+    id: randomUUID(),
+    userId,
+    campId,
+    status: "registered" as const,
+    createdAt: now,
+    updatedAt: now
+  };
+  await writeStore("campRegistrations", [registration, ...registrations]);
+  return registration;
 }
 
 export async function getCurrentUser() {

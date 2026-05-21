@@ -7,11 +7,23 @@ create table if not exists public.app_users (
   password_hash text not null,
   school text not null,
   education_level text not null,
-  interested_track text not null,
-  discord_username text not null,
   status text not null default 'pending',
   role text not null default 'student',
   created_at timestamptz not null
+);
+
+alter table public.app_users
+  drop column if exists interested_track,
+  drop column if exists discord_username;
+
+create table if not exists public.app_camp_registrations (
+  id text primary key,
+  user_id text not null,
+  camp_id text not null,
+  status text not null default 'registered',
+  created_at timestamptz not null,
+  updated_at timestamptz not null,
+  unique (user_id, camp_id)
 );
 
 create table if not exists public.app_progress (

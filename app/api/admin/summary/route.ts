@@ -8,14 +8,16 @@ export async function GET() {
   if (!user || !(await isAdminEmail(user.email))) {
     return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
   }
-  const [users, progress, checkins, activityCodes] = await Promise.all([
+  const [users, campRegistrations, progress, checkins, activityCodes] = await Promise.all([
     readStore("users"),
+    readStore("campRegistrations"),
     readStore("progress"),
     readStore("checkins"),
     readStore("activityCodes")
   ]);
   return NextResponse.json({
     users: await Promise.all(users.map(publicUser)),
+    campRegistrations,
     progress,
     checkins,
     activityCodes

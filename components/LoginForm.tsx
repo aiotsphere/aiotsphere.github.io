@@ -21,7 +21,7 @@ type LoginValues = z.infer<typeof schema>;
 export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirectedFrom") ?? "/dashboard";
+  const redirect = searchParams.get("redirectedFrom") ?? "/camp/progress";
   const { t, locale } = useI18n();
   const {
     register,
@@ -67,7 +67,7 @@ export function LoginForm() {
       </CyberButton>
       <p className="text-center text-sm text-silver">
         {t("forms.noAccount")}{" "}
-        <Link href="/register" className="font-bold text-cyan">
+        <Link href="/camp/register" className="font-bold text-cyan">
           {t("forms.submitRegister")}
         </Link>
       </p>

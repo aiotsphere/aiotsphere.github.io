@@ -1,12 +1,13 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { isSupabaseStorageEnabled, readSupabaseStore, writeSupabaseStore } from "@/lib/supabaseStorage";
-import type { ActivityCode, Checkin, ProgressRecord, User } from "@/lib/types";
+import type { ActivityCode, CampRegistration, Checkin, ProgressRecord, User } from "@/lib/types";
 
 const dataDir = path.join(process.cwd(), "data");
 
 type StoreMap = {
   users: User[];
+  campRegistrations: CampRegistration[];
   progress: ProgressRecord[];
   activityCodes: ActivityCode[];
   checkins: Checkin[];
@@ -15,6 +16,7 @@ type StoreMap = {
 
 const defaults: StoreMap = {
   users: [],
+  campRegistrations: [],
   progress: [],
   activityCodes: [],
   checkins: [],

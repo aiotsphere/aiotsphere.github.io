@@ -10,7 +10,7 @@ export default function AboutPage() {
   const { t } = useI18n();
   const items = [
     { icon: <Rocket />, title: t("nav.background"), text: t("about.history"), href: "/background" },
-    { icon: <ShieldCheck />, title: t("nav.vision"), text: t("institution.visionBody"), href: "/vision" },
+    { icon: <ShieldCheck />, title: t("nav.vision"), text: t("institution.visionBody") },
     { icon: <Network />, title: t("nav.mission"), text: t("institution.missionBody"), href: "/mission" },
     { icon: <ShieldCheck />, title: "Purpose", text: t("about.why") },
     { icon: <GraduationCap />, title: "Educational Objectives", text: t("about.objectives") },

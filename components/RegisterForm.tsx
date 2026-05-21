@@ -47,7 +47,7 @@ export function RegisterForm() {
         throw new Error(data.error === "EMAIL_EXISTS" ? "EMAIL_EXISTS" : "REGISTER_FAILED");
       }
       toast.success(t("forms.successRegister"));
-      window.location.href = "/dashboard";
+      window.location.href = "/camp/progress";
     } catch (error) {
       const message =
         error instanceof Error && error.message === "EMAIL_EXISTS"

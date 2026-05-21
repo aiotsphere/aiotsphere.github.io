@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
 import { readStore, writeStore } from "@/lib/storage";
-import { activities } from "@/lib/types";
+import { activities, aiBuilderCampId, tracks } from "@/lib/types";
 
 const schema = z.object({
   code: z.string().min(4)
@@ -19,17 +19,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "INVALID_INPUT" }, { status: 400 });
   }
   const normalizedCode = parsed.data.code.trim().toUpperCase();
+  const campRegistrations = await readStore("campRegistrations");
+  if (!campRegistrations.some((item) => item.userId === user.userId && item.campId === aiBuilderCampId && item.status !== "cancelled")) {
+    return NextResponse.json({ error: "CAMP_NOT_REGISTERED" }, { status: 403 });
+  }
+
   const codes = await readStore("activityCodes");
   const code = codes.find((item) => item.code === normalizedCode && item.active);
   if (!code || new Date(code.expiresAt).getTime() < Date.now() || code.usedCount >= code.maxUses) {
     return NextResponse.json({ error: "INVALID_CODE" }, { status: 400 });
   }
   const activity = activities.find((item) => item.id === code.activityId);
-  if (!activity) {
-    return NextResponse.json({ error: "ACTIVITY_NOT_FOUND" }, { status: 404 });
+  const track = tracks.find((item) => item.id === code.trackId);
+  if (!activity || !track) {
+    return NextResponse.json({ error: "TRACK_NOT_FOUND" }, { status: 404 });
   }
   const checkins = await readStore("checkins");
-  if (checkins.some((item) => item.userId === user.userId && item.activityId === activity.id)) {
+  if (checkins.some((item) => item.userId === user.userId && item.trackId === track.id)) {
     return NextResponse.json({ error: "ALREADY_CHECKED_IN" }, { status: 409 });
   }
 
@@ -39,7 +45,7 @@ export async function POST(request: Request) {
       userId: user.userId,
       activityId: activity.id,
       code: normalizedCode,
-      trackId: activity.trackId,
+      trackId: track.id,
       createdAt: new Date().toISOString()
     },
     ...checkins
@@ -51,14 +57,14 @@ export async function POST(request: Request) {
   );
 
   const progress = await readStore("progress");
-  const existing = progress.find((item) => item.userId === user.userId && item.trackId === activity.trackId);
+  const existing = progress.find((item) => item.userId === user.userId && item.trackId === track.id);
   const nextProgress = existing
     ? progress.map((item) =>
-        item.userId === user.userId && item.trackId === activity.trackId
+        item.userId === user.userId && item.trackId === track.id
           ? {
               ...item,
               completedActivityIds: [...new Set([...item.completedActivityIds, activity.id])],
-              xp: item.completedActivityIds.includes(activity.id) ? item.xp : item.xp + activity.xp,
+              xp: 0,
               updatedAt: new Date().toISOString()
             }
           : item
@@ -66,14 +72,27 @@ export async function POST(request: Request) {
     : [
         {
           userId: user.userId,
-          trackId: activity.trackId,
+          trackId: track.id,
           completedActivityIds: [activity.id],
-          xp: activity.xp,
+          xp: 0,
           updatedAt: new Date().toISOString()
         },
         ...progress
       ];
   await writeStore("progress", nextProgress);
 
-  return NextResponse.json({ ok: true, activity });
+  const completedTrackIds = nextProgress.filter((item) => item.userId === user.userId && item.completedActivityIds.length > 0).map((item) => item.trackId);
+  const completedCamp = tracks.every((item) => completedTrackIds.includes(item.id));
+  if (completedCamp) {
+    await writeStore(
+      "campRegistrations",
+      campRegistrations.map((item) =>
+        item.userId === user.userId && item.campId === aiBuilderCampId
+          ? { ...item, status: "completed", updatedAt: new Date().toISOString() }
+          : item
+      )
+    );
+  }
+
+  return NextResponse.json({ ok: true, activity, track, completedCamp });
 }

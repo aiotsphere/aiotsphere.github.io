@@ -1,8 +1,9 @@
-import type { ActivityCode, Checkin, ProgressRecord, User } from "@/lib/types";
+import type { ActivityCode, CampRegistration, Checkin, ProgressRecord, User } from "@/lib/types";
 import { getSupabaseAdminClient } from "@/lib/supabaseAdmin";
 
 type StoreMap = {
   users: User[];
+  campRegistrations: CampRegistration[];
   progress: ProgressRecord[];
   activityCodes: ActivityCode[];
   checkins: Checkin[];
@@ -13,6 +14,7 @@ type TableName = keyof StoreMap;
 
 const tables: Record<TableName, string> = {
   users: "app_users",
+  campRegistrations: "app_camp_registrations",
   progress: "app_progress",
   activityCodes: "app_activity_codes",
   checkins: "app_checkins",
@@ -35,11 +37,20 @@ function userFromRow(row: Record<string, unknown>): User {
     passwordHash: String(row.password_hash),
     school: String(row.school),
     educationLevel: String(row.education_level),
-    interestedTrack: row.interested_track as User["interestedTrack"],
-    discordUsername: String(row.discord_username),
     status: row.status as User["status"],
     role: row.role as User["role"],
     createdAt: String(row.created_at)
+  };
+}
+
+function campRegistrationFromRow(row: Record<string, unknown>): CampRegistration {
+  return {
+    id: String(row.id),
+    userId: String(row.user_id),
+    campId: row.camp_id as CampRegistration["campId"],
+    status: row.status as CampRegistration["status"],
+    createdAt: String(row.created_at),
+    updatedAt: String(row.updated_at)
   };
 }
 
@@ -81,6 +92,7 @@ function checkinFromRow(row: Record<string, unknown>): Checkin {
 
 function fromRows<K extends TableName>(name: K, rows: Record<string, unknown>[]): StoreMap[K] {
   if (name === "users") return rows.map(userFromRow) as StoreMap[K];
+  if (name === "campRegistrations") return rows.map(campRegistrationFromRow) as StoreMap[K];
   if (name === "progress") return rows.map(progressFromRow) as StoreMap[K];
   if (name === "activityCodes") return rows.map(activityCodeFromRow) as StoreMap[K];
   if (name === "checkins") return rows.map(checkinFromRow) as StoreMap[K];

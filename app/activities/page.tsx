@@ -24,7 +24,7 @@ export default function ActivitiesPage() {
                 <article key={activity.id} className="glass rounded-[1.5rem] p-6">
                   <div className="flex items-center justify-between">
                     <Trophy className="h-8 w-8 text-cyan" />
-                    <span className="rounded-full border border-cyan/30 bg-cyan/10 px-3 py-1 text-xs font-black text-cyan">{activity.xp} XP</span>
+                    <span className="rounded-full border border-cyan/30 bg-cyan/10 px-3 py-1 text-xs font-black text-cyan">Badge</span>
                   </div>
                   <h2 className="mt-6 text-2xl font-black text-white">{locale === "th" ? activity.titleTh : activity.title}</h2>
                   <p className="mt-2 text-sm font-bold text-violet">{locale === "th" ? track?.titleTh : track?.title}</p>
@@ -36,7 +36,7 @@ export default function ActivitiesPage() {
               );
             })}
           </div>
-          <CyberButton href="/checkin" className="mt-10">
+          <CyberButton href="/camp/checkin" className="mt-10">
             <ScanLine className="h-4 w-4" />
             {t("nav.checkin")}
           </CyberButton>

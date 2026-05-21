@@ -1,31 +1,47 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { readStore } from "@/lib/storage";
-import { activities } from "@/lib/types";
+import { activities, aiBuilderCampId, tracks } from "@/lib/types";
 
 export async function GET() {
   const user = await getCurrentUser();
   if (!user) {
     return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
   }
-  const progress = await readStore("progress");
-  const record = progress.find((item) => item.userId === user.userId && item.trackId === user.interestedTrack);
-  const trackActivities = activities.filter((activity) => activity.trackId === user.interestedTrack);
-  const completedActivityIds = record?.completedActivityIds ?? [];
-  const completed = trackActivities.filter((activity) => completedActivityIds.includes(activity.id));
-  const percentage = trackActivities.length ? Math.round((completed.length / trackActivities.length) * 100) : 0;
+
+  const [progress, campRegistrations] = await Promise.all([readStore("progress"), readStore("campRegistrations")]);
+  const campRegistration = campRegistrations.find((item) => item.userId === user.userId && item.campId === aiBuilderCampId);
+  const trackProgress = tracks.map((track) => {
+    const record = progress.find((item) => item.userId === user.userId && item.trackId === track.id);
+    const activity = activities.find((item) => item.trackId === track.id);
+    const completed = Boolean(activity && record?.completedActivityIds.includes(activity.id));
+
+    return {
+      trackId: track.id,
+      title: track.title,
+      titleTh: track.titleTh,
+      subtitle: track.subtitle,
+      subtitleTh: track.subtitleTh,
+      description: track.description,
+      descriptionTh: track.descriptionTh,
+      completed,
+      completedActivityIds: record?.completedActivityIds ?? [],
+      updatedAt: record?.updatedAt ?? null
+    };
+  });
+  const completedTrackIds = trackProgress.filter((item) => item.completed).map((item) => item.trackId);
+  const percentage = Math.round((completedTrackIds.length / tracks.length) * 100);
 
   return NextResponse.json({
-    user: { firstName: user.firstName, lastName: user.lastName, interestedTrack: user.interestedTrack },
+    user: { firstName: user.firstName, lastName: user.lastName },
+    campRegistration,
     progress: {
       percentage,
-      xp: record?.xp ?? 0,
-      completedActivityIds,
-      activities: trackActivities.map((activity, index) => ({
-        ...activity,
-        completed: completedActivityIds.includes(activity.id),
-        locked: index > 0 && !completedActivityIds.includes(trackActivities[index - 1].id)
-      }))
+      completedTrackIds,
+      completedBadges: completedTrackIds.length,
+      totalBadges: tracks.length,
+      campBadgeEarned: completedTrackIds.length === tracks.length,
+      tracks: trackProgress
     }
   });
 }

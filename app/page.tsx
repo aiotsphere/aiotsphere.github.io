@@ -6,7 +6,7 @@ import { CyberBackground } from "@/components/CyberBackground";
 import { Navbar } from "@/components/Navbar";
 import { CyberButton } from "@/components/ui/Button";
 import { useI18n } from "@/lib/i18n";
-import { activities, tracks } from "@/lib/types";
+import { tracks } from "@/lib/types";
 
 export default function Home() {
   const { t, locale } = useI18n();
@@ -42,7 +42,7 @@ export default function Home() {
                   {t("home.primaryCta")}
                   <ArrowRight className="h-5 w-5" />
                 </CyberButton>
-                <CyberButton href="/ai-builder-camp" variant="secondary" className="px-7 py-4 text-base">
+                <CyberButton href="/camp/ai-builder-camp" variant="secondary" className="px-7 py-4 text-base">
                   {t("home.secondaryCta")}
                 </CyberButton>
               </div>
@@ -64,7 +64,7 @@ export default function Home() {
           <div className="grid gap-6 lg:grid-cols-[.9fr_1.1fr]">
             <div className="glass rounded-[1.5rem] p-6">
               <p className="text-lg leading-8 text-silver">{t("home.campText")}</p>
-              <CyberButton href="/ai-builder-camp" className="mt-6">
+              <CyberButton href="/camp/ai-builder-camp" className="mt-6">
                 AI Builder Camp 2026
                 <ArrowRight className="h-4 w-4" />
               </CyberButton>
@@ -80,17 +80,6 @@ export default function Home() {
                 </div>
               ))}
             </div>
-          </div>
-        </Section>
-
-        <Section eyebrow="Activities" title={t("home.activitiesTitle")}>
-          <div className="grid gap-4 md:grid-cols-3">
-            {activities.slice(0, 6).map((activity) => (
-              <div key={activity.id} className="glass rounded-[1.25rem] p-5">
-                <p className="text-sm font-black text-cyan">{activity.xp} XP</p>
-                <h3 className="mt-3 text-xl font-black text-white">{locale === "th" ? activity.titleTh : activity.title}</h3>
-              </div>
-            ))}
           </div>
         </Section>
 

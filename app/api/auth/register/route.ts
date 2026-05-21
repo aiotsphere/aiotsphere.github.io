@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { registerUser, setSession, publicUser } from "@/lib/auth";
+import { publicUser, registerForCamp, registerUser, setSession } from "@/lib/auth";
 
 const schema = z.object({
   firstName: z.string().min(2),
@@ -18,6 +18,7 @@ export async function POST(request: Request) {
   }
   try {
     const user = await registerUser(parsed.data);
+    await registerForCamp(user.userId);
     await setSession(user);
     return NextResponse.json({ user: await publicUser(user) });
   } catch (error) {

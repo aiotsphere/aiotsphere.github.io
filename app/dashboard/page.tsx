@@ -19,7 +19,7 @@ export default function DashboardPage() {
       .then((response) => response.json())
       .then((data) => {
         if (!data.user) {
-          window.location.href = "/login?redirectedFrom=/dashboard";
+          window.location.href = "/camp/login?redirectedFrom=/dashboard";
           return;
         }
         setUser(data.user);
@@ -54,8 +54,8 @@ export default function DashboardPage() {
             </div>
           ) : null}
           <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-            <CyberButton href="/progress">{locale === "th" ? "ดูความก้าวหน้า" : "View Progress"}</CyberButton>
-            <CyberButton href="/checkin" variant="secondary">{locale === "th" ? "เช็กอินกิจกรรม" : "Activity Check-in"}</CyberButton>
+            <CyberButton href="/camp/progress">{locale === "th" ? "ดูความก้าวหน้า" : "View Progress"}</CyberButton>
+            <CyberButton href="/camp/checkin" variant="secondary">{locale === "th" ? "เช็กอินกิจกรรม" : "Activity Check-in"}</CyberButton>
           </div>
         </section>
       </main>
