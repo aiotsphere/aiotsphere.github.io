@@ -12,8 +12,10 @@ type BadgeTrack = {
   trackId: TrackId;
   title: string;
   titleTh: string;
+  titleZh: string;
   subtitle: string;
   subtitleTh: string;
+  subtitleZh: string;
   completed: boolean;
 };
 
@@ -77,8 +79,8 @@ export default function CampProgressPage() {
                         Badge
                       </span>
                     </div>
-                    <h2 className="mt-6 text-2xl font-black text-white">{locale === "th" ? track.titleTh : track.title}</h2>
-                    <p className="mt-3 text-sm font-bold text-silver">{locale === "th" ? track.subtitleTh : track.subtitle}</p>
+                    <h2 className="mt-6 text-2xl font-black text-white">{locale === "zh" ? track.titleZh : locale === "th" ? track.titleTh : track.title}</h2>
+                    <p className="mt-3 text-sm font-bold text-silver">{locale === "zh" ? track.subtitleZh : locale === "th" ? track.subtitleTh : track.subtitle}</p>
                     <p className="mt-5 text-sm font-black uppercase tracking-[0.16em] text-cyan">
                       {track.completed ? t("progress.earned") : t("progress.locked")}
                     </p>

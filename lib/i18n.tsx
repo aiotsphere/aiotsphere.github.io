@@ -2,17 +2,23 @@
 
 import en from "@/messages/en.json";
 import th from "@/messages/th.json";
+import zh from "@/messages/zh.json";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
-export type Locale = "th" | "en";
+export type Locale = "th" | "en" | "zh";
 type Messages = typeof th;
 
-const dictionaries: Record<Locale, Messages> = { th, en };
+const dictionaries: Record<Locale, Messages> = { th, en, zh };
+
+function isLocale(value: string | null): value is Locale {
+  return value === "th" || value === "en" || value === "zh";
+}
 
 type I18nContextValue = {
   locale: Locale;
   setLocale: (locale: Locale) => void;
   t: (path: string) => string;
+  tl: (translations: Record<Locale, string>) => string;
 };
 
 const I18nContext = createContext<I18nContextValue | null>(null);
@@ -31,7 +37,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const saved = window.localStorage.getItem("aiot-locale");
-    if (saved === "th" || saved === "en") {
+    if (isLocale(saved)) {
       setLocaleState(saved);
     }
   }, []);
@@ -50,7 +56,8 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
         const translated = readPath(dictionaries[locale], path);
         const fallback = readPath(dictionaries.th, path);
         return typeof translated === "string" ? translated : typeof fallback === "string" ? fallback : path;
-      }
+      },
+      tl: (translations) => translations[locale] ?? translations.th
     };
   }, [locale]);
 

@@ -22,7 +22,7 @@ type AdminSummary = {
 };
 
 export default function AdminPage() {
-  const { t, locale } = useI18n();
+  const { t, tl } = useI18n();
   const [data, setData] = useState<AdminSummary>({ users: [], campRegistrations: [], progress: [], checkins: [], activityCodes: [] });
   const [query, setQuery] = useState("");
   const [trackId, setTrackId] = useState(activities[0].id);
@@ -56,10 +56,10 @@ export default function AdminPage() {
     setLoadingCode(true);
     try {
       const activityCode = await createActivityCode(trackId, 80, 24);
-      toast.success(`${locale === "th" ? "สร้างรหัสแล้ว" : "Code created"}: ${activityCode.code}`);
+      toast.success(`${tl({ th: "สร้างรหัสแล้ว", en: "Code created", zh: "代码已创建" })}: ${activityCode.code}`);
       load();
     } catch {
-      toast.error(locale === "th" ? "ไม่สามารถสร้างรหัสได้" : "Could not create code.");
+      toast.error(tl({ th: "ไม่สามารถสร้างรหัสได้", en: "Could not create code.", zh: "无法创建代码。" }));
     } finally {
       setLoadingCode(false);
     }
@@ -108,7 +108,13 @@ export default function AdminPage() {
 
           <section className="glass mt-8 rounded-[1.5rem] p-6">
             <h2 className="text-2xl font-black text-white">{t("admin.createCode")}</h2>
-            <p className="mt-2 leading-7 text-silver">{locale === "th" ? "สร้างโค้ดยืนยันการผ่านอบรมสำหรับ Badge ของแต่ละ Track" : "Generate completion codes for each track badge."}</p>
+            <p className="mt-2 leading-7 text-silver">
+              {tl({
+                th: "สร้างโค้ดยืนยันการผ่านอบรมสำหรับ Badge ของแต่ละ Track",
+                en: "Generate completion codes for each track badge.",
+                zh: "为每个方向徽章生成完成验证代码。"
+              })}
+            </p>
             <div className="mt-5 grid gap-4 md:grid-cols-[1fr_auto]">
               <select className="input-cyber" value={trackId} onChange={(event) => setTrackId(event.target.value)}>
                 {activities.map((activity) => {

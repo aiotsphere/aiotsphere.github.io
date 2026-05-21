@@ -23,7 +23,7 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirectedFrom") ?? "/camp/progress";
-  const { t, locale } = useI18n();
+  const { t, tl } = useI18n();
   const {
     register,
     handleSubmit,
@@ -37,7 +37,7 @@ export function LoginForm() {
       toast.success(t("forms.successLogin"));
       window.location.href = redirect;
     } catch {
-      toast.error(locale === "th" ? "อีเมลหรือรหัสผ่านไม่ถูกต้อง" : "Invalid email or password.");
+      toast.error(tl({ th: "อีเมลหรือรหัสผ่านไม่ถูกต้อง", en: "Invalid email or password.", zh: "电子邮件或密码不正确。" }));
     } finally {
       setLoading(false);
     }

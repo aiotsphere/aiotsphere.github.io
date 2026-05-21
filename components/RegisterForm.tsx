@@ -23,7 +23,7 @@ type RegisterValues = z.infer<typeof schema>;
 
 export function RegisterForm() {
   const [loading, setLoading] = useState(false);
-  const { t, locale } = useI18n();
+  const { t, tl } = useI18n();
   const {
     register,
     handleSubmit,
@@ -44,9 +44,11 @@ export function RegisterForm() {
     } catch (error) {
       const message =
         error instanceof Error && error.message === "EMAIL_EXISTS"
-          ? locale === "th"
-            ? "อีเมลนี้มีอยู่ในระบบแล้ว"
-            : "This email is already registered."
+          ? tl({
+              th: "อีเมลนี้มีอยู่ในระบบแล้ว",
+              en: "This email is already registered.",
+              zh: "此电子邮件已注册。"
+            })
           : t("forms.required");
       toast.error(message);
     } finally {

@@ -11,7 +11,7 @@ import type { Registration } from "@/lib/types";
 type DashboardUser = Registration & { role: "student" | "admin" };
 
 export default function DashboardPage() {
-  const { locale } = useI18n();
+  const { tl } = useI18n();
   const [user, setUser] = useState<DashboardUser | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -54,8 +54,8 @@ export default function DashboardPage() {
             </div>
           ) : null}
           <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-            <CyberButton href="/camp/progress">{locale === "th" ? "ดูความก้าวหน้า" : "View Progress"}</CyberButton>
-            <CyberButton href="/camp/checkin" variant="secondary">{locale === "th" ? "เช็กอินกิจกรรม" : "Activity Check-in"}</CyberButton>
+            <CyberButton href="/camp/progress">{tl({ th: "ดูความก้าวหน้า", en: "View Progress", zh: "查看进度" })}</CyberButton>
+            <CyberButton href="/camp/checkin" variant="secondary">{tl({ th: "เช็กอินกิจกรรม", en: "Activity Check-in", zh: "活动签到" })}</CyberButton>
           </div>
         </section>
       </main>

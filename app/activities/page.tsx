@@ -26,8 +26,8 @@ export default function ActivitiesPage() {
                     <Trophy className="h-8 w-8 text-cyan" />
                     <span className="rounded-full border border-cyan/30 bg-cyan/10 px-3 py-1 text-xs font-black text-cyan">Badge</span>
                   </div>
-                  <h2 className="mt-6 text-2xl font-black text-white">{locale === "th" ? activity.titleTh : activity.title}</h2>
-                  <p className="mt-2 text-sm font-bold text-violet">{locale === "th" ? track?.titleTh : track?.title}</p>
+                  <h2 className="mt-6 text-2xl font-black text-white">{locale === "zh" ? activity.titleZh : locale === "th" ? activity.titleTh : activity.title}</h2>
+                  <p className="mt-2 text-sm font-bold text-violet">{locale === "zh" ? track?.titleZh : locale === "th" ? track?.titleTh : track?.title}</p>
                   <div className="mt-5 flex items-center gap-2 text-sm text-silver">
                     <Lock className="h-4 w-4" />
                     Instructor code required

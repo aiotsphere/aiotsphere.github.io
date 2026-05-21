@@ -24,7 +24,7 @@ const administrators = [
 ];
 
 export default function AdministratorsPage() {
-  const { locale } = useI18n();
+  const { tl } = useI18n();
   return (
     <>
       <CyberBackground />
@@ -33,7 +33,7 @@ export default function AdministratorsPage() {
         <section className="mx-auto max-w-7xl">
           <p className="text-xs font-black uppercase tracking-[0.24em] text-cyan">Laboratory Governance</p>
           <h1 className="neon-text mt-4 text-4xl font-black text-white md:text-7xl">
-            {locale === "th" ? "ผู้ดูแลห้องปฏิบัติการ" : "Laboratory Administrators"}
+            {tl({ th: "ผู้ดูแลห้องปฏิบัติการ", en: "Laboratory Administrators", zh: "实验室管理团队" })}
           </h1>
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             {administrators.map((admin) => (

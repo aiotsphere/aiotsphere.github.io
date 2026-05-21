@@ -12,7 +12,7 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const { t, locale, setLocale } = useI18n();
+  const { t, tl, locale, setLocale } = useI18n();
 
   useEffect(() => {
     const syncUser = () => {
@@ -44,7 +44,7 @@ export function Navbar() {
 
   const logout = async () => {
     await logoutStore();
-    toast.success(locale === "th" ? "ออกจากระบบแล้ว" : "Logged out");
+    toast.success(tl({ th: "ออกจากระบบแล้ว", en: "Logged out", zh: "已退出登录" }));
     window.location.href = "/";
   };
 
@@ -240,7 +240,7 @@ function LanguageSwitcher({
   return (
     <div className="inline-flex w-fit items-center gap-1 rounded-full border border-white/10 bg-white/5 p-1">
       {!compact ? <Languages className="ml-2 h-4 w-4 text-cyan" /> : null}
-      {(["th", "en"] as Locale[]).map((item) => (
+      {(["th", "en", "zh"] as Locale[]).map((item) => (
         <button
           key={item}
           onClick={() => setLocale(item)}

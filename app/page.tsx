@@ -73,10 +73,10 @@ export default function Home() {
               {tracks.map((track) => (
                 <div key={track.id} className="glass rounded-[1.25rem] p-5">
                   <p className="text-sm font-bold uppercase tracking-[0.18em] text-cyan">
-                    {locale === "th" ? track.subtitleTh : track.subtitle}
+                    {locale === "zh" ? track.subtitleZh : locale === "th" ? track.subtitleTh : track.subtitle}
                   </p>
-                  <h3 className="mt-3 text-xl font-black text-white">{locale === "th" ? track.titleTh : track.title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-silver">{locale === "th" ? track.descriptionTh : track.description}</p>
+                  <h3 className="mt-3 text-xl font-black text-white">{locale === "zh" ? track.titleZh : locale === "th" ? track.titleTh : track.title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-silver">{locale === "zh" ? track.descriptionZh : locale === "th" ? track.descriptionTh : track.description}</p>
                 </div>
               ))}
             </div>

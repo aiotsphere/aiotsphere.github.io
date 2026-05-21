@@ -6,11 +6,11 @@ import { LoginForm } from "@/components/LoginForm";
 import { useI18n } from "@/lib/i18n";
 
 export default function CampLoginPage() {
-  const { t, locale } = useI18n();
+  const { t, tl } = useI18n();
   return (
     <AuthShell
       title={t("forms.submitLogin")}
-      subtitle={locale === "th" ? "เข้าสู่ระบบ AIoT Sphere Laboratory" : "Access AIoT Sphere Laboratory"}
+      subtitle={tl({ th: "เข้าสู่ระบบ AIoT Sphere Laboratory", en: "Access AIoT Sphere Laboratory", zh: "访问 AIoT Sphere 实验室" })}
     >
       <Suspense>
         <LoginForm />
