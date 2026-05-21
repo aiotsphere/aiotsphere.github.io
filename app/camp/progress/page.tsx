@@ -33,13 +33,15 @@ export default function CampProgressPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const user = getCurrentUser();
-    if (!user) {
-      window.location.href = "/camp/login?redirectedFrom=/camp/progress";
-      return;
-    }
-    setData({ progress: getBadgeProgress(user.userId) });
-    setLoading(false);
+    getCurrentUser()
+      .then(async (user) => {
+        if (!user) {
+          window.location.href = "/camp/login?redirectedFrom=/camp/progress";
+          return;
+        }
+        setData({ progress: await getBadgeProgress(user.userId) });
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const progress = data?.progress;

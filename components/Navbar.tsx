@@ -16,9 +16,15 @@ export function Navbar() {
 
   useEffect(() => {
     const syncUser = () => {
-      const user = getCurrentUser();
-      setSignedIn(Boolean(user));
-      setIsAdmin(user?.role === "admin");
+      getCurrentUser()
+        .then((user) => {
+          setSignedIn(Boolean(user));
+          setIsAdmin(user?.role === "admin");
+        })
+        .catch(() => {
+          setSignedIn(false);
+          setIsAdmin(false);
+        });
     };
     syncUser();
     window.addEventListener("aiot-store-change", syncUser);
@@ -37,7 +43,7 @@ export function Navbar() {
   }, [open]);
 
   const logout = async () => {
-    logoutStore();
+    await logoutStore();
     toast.success(locale === "th" ? "ออกจากระบบแล้ว" : "Logged out");
     window.location.href = "/";
   };

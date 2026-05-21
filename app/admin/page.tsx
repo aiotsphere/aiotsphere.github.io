@@ -29,12 +29,13 @@ export default function AdminPage() {
   const [loadingCode, setLoadingCode] = useState(false);
 
   const load = () => {
-    const user = getCurrentUser();
-    if (!user || !isAdminEmail(user.email)) {
-      window.location.href = "/camp/login?redirectedFrom=/admin";
-      return;
-    }
-    setData(getAdminSummary());
+    getCurrentUser().then(async (user) => {
+      if (!user || !isAdminEmail(user.email)) {
+        window.location.href = "/camp/login?redirectedFrom=/admin";
+        return;
+      }
+      setData(await getAdminSummary());
+    });
   };
 
   useEffect(load, []);
@@ -54,7 +55,7 @@ export default function AdminPage() {
   const createCode = async () => {
     setLoadingCode(true);
     try {
-      const activityCode = createActivityCode(trackId, 80, 24);
+      const activityCode = await createActivityCode(trackId, 80, 24);
       toast.success(`${locale === "th" ? "สร้างรหัสแล้ว" : "Code created"}: ${activityCode.code}`);
       load();
     } catch {

@@ -1,16 +1,28 @@
 "use client";
 
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+  type User as FirebaseUser
+} from "firebase/auth";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  increment,
+  query,
+  runTransaction,
+  setDoc,
+  updateDoc,
+  where
+} from "firebase/firestore";
+import { getFirebaseAuth, getFirebaseDb, isFirebaseConfigured } from "@/lib/firebaseClient";
 import { activities, aiBuilderCampId, tracks } from "@/lib/types";
 import type { ActivityCode, CampRegistration, Checkin, ProgressRecord, User } from "@/lib/types";
-
-const keys = {
-  users: "aiot.static.users",
-  campRegistrations: "aiot.static.campRegistrations",
-  progress: "aiot.static.progress",
-  activityCodes: "aiot.static.activityCodes",
-  checkins: "aiot.static.checkins",
-  session: "aiot.static.session"
-};
 
 const adminEmails = ["aiotsphere@utcc.ac.th"];
 
@@ -28,84 +40,81 @@ type LoginInput = {
   password: string;
 };
 
-function readJson<T>(key: string, fallback: T): T {
-  if (typeof window === "undefined") return fallback;
-  const raw = window.localStorage.getItem(key);
-  if (!raw) return fallback;
-  try {
-    return JSON.parse(raw) as T;
-  } catch {
-    return fallback;
-  }
-}
-
-function writeJson<T>(key: string, value: T) {
-  window.localStorage.setItem(key, JSON.stringify(value));
-  window.dispatchEvent(new Event("aiot-store-change"));
-}
+type AdminSummary = {
+  users: Array<Omit<User, "passwordHash"> & { passwordHash?: string }>;
+  campRegistrations: CampRegistration[];
+  progress: ProgressRecord[];
+  checkins: Checkin[];
+  activityCodes: ActivityCode[];
+};
 
 function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
 }
 
-function makeId() {
-  if (crypto.randomUUID) return crypto.randomUUID();
-  return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-}
-
-async function hashPassword(password: string) {
-  const encoded = new TextEncoder().encode(password);
-  const hash = await crypto.subtle.digest("SHA-256", encoded);
-  return Array.from(new Uint8Array(hash))
-    .map((byte) => byte.toString(16).padStart(2, "0"))
-    .join("");
+function clean<T extends Record<string, unknown>>(value: T) {
+  return JSON.parse(JSON.stringify(value)) as T;
 }
 
 export function isAdminEmail(email: string) {
   return adminEmails.includes(normalizeEmail(email));
 }
 
-export function getUsers() {
-  return readJson<User[]>(keys.users, []);
+function requireFirebase() {
+  if (!isFirebaseConfigured()) {
+    throw new Error("FIREBASE_NOT_CONFIGURED");
+  }
 }
 
-export function getCampRegistrations() {
-  return readJson<CampRegistration[]>(keys.campRegistrations, []);
+function toUser(authUser: FirebaseUser, data: Record<string, unknown>): User {
+  return {
+    id: String(data.id ?? authUser.uid),
+    userId: String(data.userId ?? authUser.uid),
+    firstName: String(data.firstName ?? ""),
+    lastName: String(data.lastName ?? ""),
+    email: normalizeEmail(String(data.email ?? authUser.email ?? "")),
+    passwordHash: "",
+    school: String(data.school ?? ""),
+    educationLevel: String(data.educationLevel ?? ""),
+    status: (data.status as User["status"]) ?? "pending",
+    role: isAdminEmail(String(data.email ?? authUser.email ?? "")) ? "admin" : "student",
+    createdAt: String(data.createdAt ?? new Date().toISOString())
+  };
 }
 
-export function getProgressRecords() {
-  return readJson<ProgressRecord[]>(keys.progress, []);
+function currentFirebaseUser() {
+  requireFirebase();
+  return new Promise<FirebaseUser | null>((resolve) => {
+    const unsubscribe = onAuthStateChanged(getFirebaseAuth(), (user) => {
+      unsubscribe();
+      resolve(user);
+    });
+  });
 }
 
-export function getActivityCodes() {
-  return readJson<ActivityCode[]>(keys.activityCodes, []);
-}
-
-export function getCheckins() {
-  return readJson<Checkin[]>(keys.checkins, []);
-}
-
-export function getCurrentUser() {
-  const userId = typeof window === "undefined" ? null : window.localStorage.getItem(keys.session);
-  if (!userId) return null;
-  return getUsers().find((user) => user.userId === userId) ?? null;
+export async function getCurrentUser() {
+  const authUser = await currentFirebaseUser();
+  if (!authUser) return null;
+  const snapshot = await getDoc(doc(getFirebaseDb(), "users", authUser.uid));
+  if (!snapshot.exists()) return null;
+  return toUser(authUser, snapshot.data());
 }
 
 export async function registerMembership(input: RegisterInput) {
-  const users = getUsers();
+  requireFirebase();
   const email = normalizeEmail(input.email);
-  if (users.some((user) => normalizeEmail(user.email) === email)) {
-    throw new Error("EMAIL_EXISTS");
-  }
+  const auth = getFirebaseAuth();
+  const credential = await createUserWithEmailAndPassword(auth, email, input.password);
+  await updateProfile(credential.user, { displayName: `${input.firstName.trim()} ${input.lastName.trim()}` });
 
   const now = new Date().toISOString();
   const user: User = {
-    id: makeId(),
-    userId: makeId(),
+    id: credential.user.uid,
+    userId: credential.user.uid,
     firstName: input.firstName.trim(),
     lastName: input.lastName.trim(),
     email,
-    passwordHash: await hashPassword(input.password),
+    passwordHash: "",
     school: input.school.trim(),
     educationLevel: input.educationLevel,
     status: "pending",
@@ -113,61 +122,61 @@ export async function registerMembership(input: RegisterInput) {
     createdAt: now
   };
 
-  writeJson(keys.users, [user, ...users]);
-  registerForCamp(user.userId);
-  window.localStorage.setItem(keys.session, user.userId);
+  await setDoc(doc(getFirebaseDb(), "users", credential.user.uid), clean(user));
+  await registerForCamp(credential.user.uid);
   window.dispatchEvent(new Event("aiot-store-change"));
   return user;
 }
 
 export async function login(input: LoginInput) {
-  const user = getUsers().find((item) => normalizeEmail(item.email) === normalizeEmail(input.email));
-  if (!user || user.passwordHash !== (await hashPassword(input.password))) {
-    throw new Error("INVALID_CREDENTIALS");
-  }
-  window.localStorage.setItem(keys.session, user.userId);
+  requireFirebase();
+  const credential = await signInWithEmailAndPassword(getFirebaseAuth(), normalizeEmail(input.email), input.password);
   window.dispatchEvent(new Event("aiot-store-change"));
-  return user;
+  return getCurrentUserForAuth(credential.user);
 }
 
-export function logout() {
-  window.localStorage.removeItem(keys.session);
+async function getCurrentUserForAuth(authUser: FirebaseUser) {
+  const snapshot = await getDoc(doc(getFirebaseDb(), "users", authUser.uid));
+  if (!snapshot.exists()) return null;
+  return toUser(authUser, snapshot.data());
+}
+
+export async function logout() {
+  requireFirebase();
+  await signOut(getFirebaseAuth());
   window.dispatchEvent(new Event("aiot-store-change"));
 }
 
-export function registerForCamp(userId: string) {
-  const registrations = getCampRegistrations();
-  const existing = registrations.find((item) => item.userId === userId && item.campId === aiBuilderCampId);
-  if (existing) return existing;
+export async function registerForCamp(userId: string) {
+  requireFirebase();
+  const registrationId = `${userId}_${aiBuilderCampId}`;
+  const registrationRef = doc(getFirebaseDb(), "campRegistrations", registrationId);
+  const snapshot = await getDoc(registrationRef);
+  if (snapshot.exists()) return snapshot.data() as CampRegistration;
 
   const now = new Date().toISOString();
   const registration: CampRegistration = {
-    id: makeId(),
+    id: registrationId,
     userId,
     campId: aiBuilderCampId,
     status: "registered",
     createdAt: now,
     updatedAt: now
   };
-  writeJson(keys.campRegistrations, [registration, ...registrations]);
+  await setDoc(registrationRef, clean(registration));
   return registration;
 }
 
-export function createActivityCode(activityId: string, maxUses = 80, expiresInHours = 24) {
-  const user = getCurrentUser();
+export async function createActivityCode(activityId: string, maxUses = 80, expiresInHours = 24) {
+  const user = await getCurrentUser();
   if (!user || !isAdminEmail(user.email)) throw new Error("FORBIDDEN");
 
   const activity = activities.find((item) => item.id === activityId);
   if (!activity) throw new Error("ACTIVITY_NOT_FOUND");
 
-  const codes = getActivityCodes();
-  let code = `AIOT-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
-  while (codes.some((item) => item.code === code)) {
-    code = `AIOT-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
-  }
-
+  const code = `AIOT-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
   const activityCode: ActivityCode = {
-    id: makeId(),
+    id: code,
     code,
     activityId,
     trackId: activity.trackId,
@@ -178,88 +187,77 @@ export function createActivityCode(activityId: string, maxUses = 80, expiresInHo
     active: true,
     createdAt: new Date().toISOString()
   };
-  writeJson(keys.activityCodes, [activityCode, ...codes]);
+
+  await setDoc(doc(getFirebaseDb(), "activityCodes", activityCode.id), clean(activityCode));
+  window.dispatchEvent(new Event("aiot-store-change"));
   return activityCode;
 }
 
-export function claimBadge(rawCode: string) {
-  const user = getCurrentUser();
+export async function claimBadge(rawCode: string) {
+  const user = await getCurrentUser();
   if (!user) throw new Error("UNAUTHORIZED");
 
-  const registration = getCampRegistrations().find((item) => item.userId === user.userId && item.campId === aiBuilderCampId && item.status !== "cancelled");
-  if (!registration) throw new Error("CAMP_NOT_REGISTERED");
+  const registrationId = `${user.userId}_${aiBuilderCampId}`;
+  const registrationRef = doc(getFirebaseDb(), "campRegistrations", registrationId);
+  const registrationSnapshot = await getDoc(registrationRef);
+  if (!registrationSnapshot.exists()) throw new Error("CAMP_NOT_REGISTERED");
 
   const codeValue = rawCode.trim().toUpperCase();
-  const codes = getActivityCodes();
-  const code = codes.find((item) => item.code === codeValue && item.active);
-  if (!code || new Date(code.expiresAt).getTime() < Date.now() || code.usedCount >= code.maxUses) {
+  const codeRef = doc(getFirebaseDb(), "activityCodes", codeValue);
+  const codeSnapshot = await getDoc(codeRef);
+  if (!codeSnapshot.exists()) throw new Error("INVALID_CODE");
+
+  const code = codeSnapshot.data() as ActivityCode;
+  if (!code.active || new Date(code.expiresAt).getTime() < Date.now() || code.usedCount >= code.maxUses) {
     throw new Error("INVALID_CODE");
   }
 
   const activity = activities.find((item) => item.id === code.activityId);
   if (!activity) throw new Error("ACTIVITY_NOT_FOUND");
 
-  const checkins = getCheckins();
-  if (checkins.some((item) => item.userId === user.userId && item.trackId === code.trackId)) {
-    throw new Error("ALREADY_CHECKED_IN");
-  }
+  const checkinId = `${user.userId}_${code.trackId}`;
+  const checkinRef = doc(getFirebaseDb(), "checkins", checkinId);
+  const progressRef = doc(getFirebaseDb(), "progress", checkinId);
 
-  writeJson(keys.checkins, [
-    {
-      id: makeId(),
+  await runTransaction(getFirebaseDb(), async (transaction) => {
+    const checkinSnapshot = await transaction.get(checkinRef);
+    if (checkinSnapshot.exists()) throw new Error("ALREADY_CHECKED_IN");
+
+    transaction.set(checkinRef, {
+      id: checkinId,
       userId: user.userId,
       activityId: activity.id,
       code: codeValue,
       trackId: code.trackId,
       createdAt: new Date().toISOString()
-    },
-    ...checkins
-  ]);
+    } satisfies Checkin);
+    transaction.set(progressRef, {
+      userId: user.userId,
+      trackId: code.trackId,
+      completedActivityIds: [activity.id],
+      xp: 0,
+      updatedAt: new Date().toISOString()
+    } satisfies ProgressRecord);
+    transaction.update(codeRef, { usedCount: increment(1) });
+  });
 
-  writeJson(
-    keys.activityCodes,
-    codes.map((item) => (item.id === code.id ? { ...item, usedCount: item.usedCount + 1 } : item))
-  );
-
-  const progress = getProgressRecords();
-  const existing = progress.find((item) => item.userId === user.userId && item.trackId === code.trackId);
-  const nextProgress = existing
-    ? progress.map((item) =>
-        item.userId === user.userId && item.trackId === code.trackId
-          ? {
-              ...item,
-              completedActivityIds: [...new Set([...item.completedActivityIds, activity.id])],
-              updatedAt: new Date().toISOString()
-            }
-          : item
-      )
-    : [
-        {
-          userId: user.userId,
-          trackId: code.trackId,
-          completedActivityIds: [activity.id],
-          xp: 0,
-          updatedAt: new Date().toISOString()
-        },
-        ...progress
-      ];
-  writeJson(keys.progress, nextProgress);
-
-  const completedTrackIds = nextProgress.filter((item) => item.userId === user.userId && item.completedActivityIds.length > 0).map((item) => item.trackId);
+  const progress = await getUserProgressRecords(user.userId);
+  const completedTrackIds = progress.filter((item) => item.completedActivityIds.length > 0).map((item) => item.trackId);
   if (tracks.every((track) => completedTrackIds.includes(track.id))) {
-    writeJson(
-      keys.campRegistrations,
-      getCampRegistrations().map((item) =>
-        item.id === registration.id ? { ...item, status: "completed", updatedAt: new Date().toISOString() } : item
-      )
-    );
+    await updateDoc(registrationRef, { status: "completed", updatedAt: new Date().toISOString() });
   }
 
+  window.dispatchEvent(new Event("aiot-store-change"));
   return { activity, track: tracks.find((item) => item.id === code.trackId), completedCamp: tracks.every((track) => completedTrackIds.includes(track.id)) };
 }
 
-export function getBadgeProgress(userId: string) {
-  const progress = getProgressRecords();
+async function getUserProgressRecords(userId: string) {
+  const snapshot = await getDocs(query(collection(getFirebaseDb(), "progress"), where("userId", "==", userId)));
+  return snapshot.docs.map((item) => item.data() as ProgressRecord);
+}
+
+export async function getBadgeProgress(userId: string) {
+  const progress = await getUserProgressRecords(userId);
   const trackProgress = tracks.map((track) => {
     const record = progress.find((item) => item.userId === userId && item.trackId === track.id);
     const activity = activities.find((item) => item.trackId === track.id);
@@ -277,12 +275,28 @@ export function getBadgeProgress(userId: string) {
   };
 }
 
-export function getAdminSummary() {
+async function getCollection<T>(name: string) {
+  const snapshot = await getDocs(collection(getFirebaseDb(), name));
+  return snapshot.docs.map((item) => item.data() as T);
+}
+
+export async function getAdminSummary(): Promise<AdminSummary> {
+  const user = await getCurrentUser();
+  if (!user || !isAdminEmail(user.email)) throw new Error("FORBIDDEN");
+
+  const [users, campRegistrations, progress, checkins, activityCodes] = await Promise.all([
+    getCollection<User>("users"),
+    getCollection<CampRegistration>("campRegistrations"),
+    getCollection<ProgressRecord>("progress"),
+    getCollection<Checkin>("checkins"),
+    getCollection<ActivityCode>("activityCodes")
+  ]);
+
   return {
-    users: getUsers().map((user) => ({ ...user, passwordHash: "" })),
-    campRegistrations: getCampRegistrations(),
-    progress: getProgressRecords(),
-    checkins: getCheckins(),
-    activityCodes: getActivityCodes()
+    users: users.map((item) => ({ ...item, passwordHash: "" })),
+    campRegistrations,
+    progress,
+    checkins,
+    activityCodes
   };
 }

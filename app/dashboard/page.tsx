@@ -16,13 +16,15 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const currentUser = getCurrentUser();
-    if (!currentUser) {
-      window.location.href = "/camp/login?redirectedFrom=/dashboard";
-      return;
-    }
-    setUser(currentUser);
-    setLoading(false);
+    getCurrentUser()
+      .then((currentUser) => {
+        if (!currentUser) {
+          window.location.href = "/camp/login?redirectedFrom=/dashboard";
+          return;
+        }
+        setUser(currentUser);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   return (

@@ -18,7 +18,7 @@ export default function CampCheckinPage() {
     event.preventDefault();
     setLoading(true);
     try {
-      claimBadge(code);
+      await claimBadge(code);
       toast.success(t("checkin.success"));
       setCode("");
       window.location.href = "/camp/progress";
