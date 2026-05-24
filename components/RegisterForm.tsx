@@ -41,7 +41,7 @@ export function RegisterForm() {
     try {
       await registerMembership(values);
       toast.success(t("forms.successRegister"));
-      window.location.href = "/camp/progress";
+      window.location.href = "/camp/login";
     } catch (error) {
       const message =
         error instanceof FirebaseError
