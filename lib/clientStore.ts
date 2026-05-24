@@ -123,6 +123,10 @@ export async function registerMembership(input: RegisterInput) {
   };
 
   await setDoc(doc(getFirebaseDb(), "users", credential.user.uid), clean(user));
+  
+  // Small delay to ensure auth state is settled before writing to campRegistrations
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
   await registerForCamp(credential.user.uid);
   window.dispatchEvent(new Event("aiot-store-change"));
   return user;
