@@ -15,6 +15,7 @@
     "lint": "npm run lint:web && npm run lint:admin",
     "lint:web": "npm --workspace=@aiotsphere/web run lint",
     "lint:admin": "npm --workspace=@aiotsphere/admin run lint",
+    "export:web": "npm --workspace=@aiotsphere/web run build && npm --workspace=@aiotsphere/web run export",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "prepare": "husky install"
   },
