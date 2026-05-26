@@ -1,0 +1,51 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn() && request.auth.token.email in ['aiotsphere@utcc.ac.th'];
+    }
+
+    match /users/{userId} {
+      allow create: if signedIn() && request.auth.uid == userId;
+      allow read, update: if signedIn() && (request.auth.uid == userId || isAdmin());
+      allow delete: if false;
+    }
+
+    match /campRegistrations/{registrationId} {
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow read, update: if signedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow list: if isAdmin();
+      allow delete: if false;
+    }
+
+    match /progress/{progressId} {
+      allow read: if signedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow list: if isAdmin();
+      allow create, update: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow delete: if false;
+    }
+
+    match /checkins/{checkinId} {
+      allow read: if signedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow list: if isAdmin();
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    match /activityCodes/{codeId} {
+      allow get: if signedIn();
+      allow list, create: if isAdmin();
+      allow update: if isAdmin() || (
+        signedIn() &&
+        request.resource.data.diff(resource.data).changedKeys().hasOnly(['usedCount']) &&
+        request.resource.data.usedCount == resource.data.usedCount + 1
+      );
+      allow delete: if false;
+    }
+  }
+}
