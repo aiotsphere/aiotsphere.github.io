@@ -1,0 +1,16 @@
+{
+  "name": "aiotsphere-functions",
+  "private": true,
+  "scripts": {
+    "build": "tsc --build",
+    "serve": "firebase emulators:start --only functions"
+  },
+  "dependencies": {
+    "firebase-admin": "^11.13.0",
+    "firebase-functions": "^4.5.0",
+    "openai": "^5.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}

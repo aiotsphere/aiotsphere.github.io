@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@aiotsphere/ui": ["packages/ui"],
+      "@aiotsphere/types": ["packages/types"],
+      "@aiotsphere/lib": ["packages/lib"],
+      "@aiotsphere/config": ["packages/config"],
+      "@aiotsphere/analytics": ["packages/analytics"],
+      "@aiotsphere/ai": ["packages/ai"]
+    }
+  },
+  "include": ["packages/**/*", "apps/**/*", "firebase/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
